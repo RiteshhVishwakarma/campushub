@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - CampusHub{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
+        <p class="text-gray-600 text-sm mt-1">Update your profile information</p>
+    </div>
+    
+    <!-- Edit Form Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <form method="post" enctype="multipart/form-data" class="p-6">
+            {% csrf_token %}
+            
+            <!-- Profile Photo Section -->
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Profile Photo</label>
+                
+                <!-- Current Photo Preview -->
+                <div class="flex items-center gap-4 mb-4">
+                    <div id="photo-preview" class="flex-shrink-0">
+                        {% if profile.profile_photo %}
+                            <img src="{{ profile.profile_photo.url }}" 
+                                 alt="Current profile photo" 
+                                 class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                        {% else %}
+                            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200">
+                                <span class="text-white text-2xl font-bold">{{ profile.get_initials }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-600 mb-2">JPG, PNG or WEBP. Max size 5MB</p>
+                        <label for="{{ form.profile_photo.id_for_label }}" 
+                               class="inline-block bg-gray-100 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
+                            Choose New Photo
+                        </label>
+                        {{ form.profile_photo }}
+                    </div>
+                </div>
+                
+                {% if form.profile_photo.errors %}
+                    <div class="text-red-600 text-sm mt-2">
+                        {{ form.profile_photo.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Full Name -->
+            <div class="mb-6">
+                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Full Name <span class="text-red-500">*</span>
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <p class="text-red-600 text-sm mt-2">{{ form.first_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Bio -->
+            <div class="mb-6">
+                <label for="{{ form.bio.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Bio
+                </label>
+                {{ form.bio }}
+                <p class="text-gray-500 text-xs mt-1">
+                    <span id="bio-count">{{ form.bio.value|length|default:0 }}</span>/120 characters
+                </p>
+                {% if form.bio.errors %}
+                    <p class="text-red-600 text-sm mt-2">{{ form.bio.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Phone -->
+            <div class="mb-6">
+                <label for="{{ form.phone.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number
+                </label>
+                {{ form.phone }}
+                <p class="text-gray-500 text-xs mt-1">Format: +1234567890 or 1234567890</p>
+                {% if form.phone.errors %}
+                    <p class="text-red-600 text-sm mt-2">{{ form.phone.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Read-Only Fields Section -->
+            <div class="mb-6 pb-6 border-t border-gray-100 pt-6">
+                <h3 class="text-sm font-semibold text-gray-700 mb-4">Account Information (Read Only)</h3>
+                
+                <div class="space-y-4">
+                    <!-- Username -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Username</label>
+                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
+                            <span class="text-gray-800">{{ user.username }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
+                            <span class="text-gray-800">{{ user.email }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- College -->
+                    {% if profile.college %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">College</label>
+                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
+                            <span class="text-gray-800">{{ profile.college }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button type="submit" 
+                        class="flex-1 bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                    Save Changes
+                </button>
+                <a href="{% url 'accounts:profile' %}" 
+                   class="flex-1 bg-gray-100 text-gray-700 text-center font-semibold px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Hide default file input */
+    input[type="file"] {
+        display: none;
+    }
+</style>
+
+<script>
+    // Bio character counter
+    document.addEventListener('DOMContentLoaded', function() {
+        const bioTextarea = document.getElementById('{{ form.bio.id_for_label }}');
+        const bioCount = document.getElementById('bio-count');
+        
+        if (bioTextarea) {
+            bioTextarea.addEventListener('input', function() {
+                bioCount.textContent = this.value.length;
+            });
+        }
+        
+        // Photo preview
+        const photoInput = document.getElementById('{{ form.profile_photo.id_for_label }}');
+        const photoPreview = document.getElementById('photo-preview');
+        
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        photoPreview.innerHTML = `
+                            <img src="${e.target.result}" 
+                                 alt="New profile photo" 
+                                 class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

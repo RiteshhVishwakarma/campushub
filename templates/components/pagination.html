@@ -1,0 +1,62 @@
+{% comment %}
+Reusable pagination component - Premium & Minimal Design
+Usage: {% include 'components/pagination.html' with page_obj=page_obj %}
+{% endcomment %}
+
+{% if page_obj.has_other_pages %}
+<div class="flex flex-col items-center gap-4 mt-8 mb-6">
+    
+    <!-- Pagination Controls -->
+    <div class="flex items-center gap-2">
+        
+        {% if page_obj.has_previous %}
+            <!-- Previous Button -->
+            <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" 
+               class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span class="hidden sm:inline">Previous</span>
+            </a>
+        {% else %}
+            <!-- Disabled Previous Button -->
+            <div class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-400 bg-neutral-50 border border-neutral-200 rounded-lg cursor-not-allowed">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <span class="hidden sm:inline">Previous</span>
+            </div>
+        {% endif %}
+        
+        <!-- Page Info -->
+        <div class="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg">
+            <span class="hidden sm:inline">Page </span>{{ page_obj.number }}<span class="text-neutral-400 mx-1">/</span>{{ page_obj.paginator.num_pages }}
+        </div>
+        
+        {% if page_obj.has_next %}
+            <!-- Next Button -->
+            <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" 
+               class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-colors">
+                <span class="hidden sm:inline">Next</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        {% else %}
+            <!-- Disabled Next Button -->
+            <div class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-400 bg-neutral-50 border border-neutral-200 rounded-lg cursor-not-allowed">
+                <span class="hidden sm:inline">Next</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        {% endif %}
+        
+    </div>
+    
+    <!-- Results Info -->
+    <p class="text-xs text-neutral-500">
+        Showing <span class="font-medium text-neutral-700">{{ page_obj.start_index }}–{{ page_obj.end_index }}</span> of <span class="font-medium text-neutral-700">{{ page_obj.paginator.count }}</span> {{ page_obj.paginator.count|pluralize:"post,posts" }}
+    </p>
+</div>
+{% endif %}
