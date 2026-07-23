@@ -5,6 +5,8 @@ All sensitive values should be set via environment variables.
 import environ
 from .base import *
 
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 # Initialize environment variables
 env = environ.Env(
     DEBUG=(bool, False)
