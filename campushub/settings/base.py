@@ -21,6 +21,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # Third-party apps
+    'cloudinary_storage',  # Must be before django.contrib.staticfiles
+    'cloudinary',  # Cloudinary integration
+    
     # Local apps
     'core',
     'accounts',
@@ -100,9 +104,33 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Compresses static files and adds cache headers for better performance
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files
+# Media files configuration
+# In development: Uses local MEDIA_ROOT
+# In production: Uses Cloudinary (configured via STORAGES below)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Cloudinary configuration
+# Credentials loaded from environment variables
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME', default='dk0bhqeuf'),
+    'API_KEY': env('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': env('CLOUDINARY_API_SECRET', default=''),
+}
+
+# Django 6.x STORAGES configuration
+# Static files: Handled by WhiteNoise (via STATICFILES_STORAGE above)
+# Media files: Handled by Cloudinary in production, local filesystem in development
+STORAGES = {
+    "default": {
+        # Media file storage (user uploads: profile pictures, post images)
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        # Static file storage (CSS, JS - handled by WhiteNoise)
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
