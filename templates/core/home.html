@@ -1,155 +1,497 @@
 {% extends 'base.html' %}
 {% load post_extras %}
 
-{% block title %}CampusHub{% endblock %}
+{% block title %}CampusHub - Your Campus Community Platform{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
+
+<!-- Premium Hero Section -->
+<div style="position: relative; overflow: hidden; background: linear-gradient(180deg, var(--color-brand-50) 0%, var(--color-white) 100%);">
+    <!-- Decorative Background Elements -->
+    <div style="position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -150px; left: -150px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
     
-    <!-- Hero Section -->
-    <div class="py-16 px-4 mb-12">
-        <h1 class="text-3xl md:text-4xl font-semibold text-neutral-900 mb-4 leading-tight">
-            Everything happening at your campus
-        </h1>
-        
-        <p class="text-lg text-neutral-600 mb-8 max-w-2xl">
-            Find roommates, flats, internships, events and buy & sell listings from fellow students.
+    <div class="max-w-6xl mx-auto" style="position: relative; padding: var(--space-20) var(--space-4) var(--space-16);">
+        <div style="text-align: center; max-width: 48rem; margin: 0 auto;">
+            <!-- Badge -->
+            <div style="display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--color-white); border: 1px solid var(--border-primary); border-radius: var(--radius-full); margin-bottom: var(--space-6); box-shadow: var(--shadow-sm);">
+                <span style="display: inline-flex; width: 8px; height: 8px; background: var(--color-success-500); border-radius: 50%; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></span>
+                <span style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--text-secondary);">
+                    Built for Students, by Students
+                </span>
+            </div>
+            
+            <!-- Main Headline -->
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); font-weight: var(--font-bold); color: var(--text-primary); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); margin-bottom: var(--space-6);">
+                Everything happening at
+                <span style="background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-400) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">your campus</span>
+            </h1>
+            
+            <!-- Subheadline -->
+            <p style="font-size: var(--text-xl); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-10); max-width: 40rem; margin-left: auto; margin-right: auto;">
+                Find roommates, accommodation, internships, events and marketplace — all in one place. No more scattered WhatsApp groups.
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div style="display: flex; flex-direction: column; sm:flex-direction: row; align-items: center; justify-content: center; gap: var(--space-4); margin-bottom: var(--space-12);" class="flex-col sm:flex-row">
+                <a href="{% url 'posts:post_list' %}" class="btn btn-brand" style="font-size: var(--text-base); padding: var(--space-4) var(--space-8); min-width: 200px; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Browse Posts</span>
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'posts:post_create' %}" class="btn btn-ghost" style="font-size: var(--text-base); padding: var(--space-4) var(--space-8); min-width: 200px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Create Post</span>
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-ghost" style="font-size: var(--text-base); padding: var(--space-4) var(--space-8); min-width: 200px;">
+                    <span>Sign Up Free</span>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Social Proof / Stats -->
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--border-primary);">
+                <div style="text-align: center;">
+                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-brand);">500+</div>
+                    <div style="font-size: var(--text-sm); color: var(--text-tertiary); margin-top: var(--space-1);">Active Posts</div>
+                </div>
+                <div style="width: 1px; height: 2rem; background: var(--border-primary);" class="hidden sm:block"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-brand);">1000+</div>
+                    <div style="font-size: var(--text-sm); color: var(--text-tertiary); margin-top: var(--space-1);">Students</div>
+                </div>
+                <div style="width: 1px; height: 2rem; background: var(--border-primary);" class="hidden sm:block"></div>
+                <div style="text-align: center;">
+                    <div style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-brand);">24/7</div>
+                    <div style="font-size: var(--text-sm); color: var(--text-tertiary); margin-top: var(--space-1);">Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="max-w-6xl mx-auto" style="padding: var(--space-16) var(--space-4);">
+    <div style="text-align: center; margin-bottom: var(--space-12);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-3);">
+            Explore by Category
+        </h2>
+        <p style="font-size: var(--text-lg); color: var(--text-secondary); max-width: 36rem; margin: 0 auto;">
+            Find exactly what you're looking for with our organized categories
         </p>
-        
-        <div class="flex flex-col sm:flex-row items-start gap-3">
-            <a href="{% url 'posts:post_list' %}" class="inline-flex items-center justify-center px-5 py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors">
-                Browse Posts
-            </a>
-            {% if user.is_authenticated %}
-            <a href="{% url 'posts:post_create' %}" class="inline-flex items-center justify-center px-5 py-2.5 border border-neutral-300 text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">
-                Create Post
-            </a>
-            {% else %}
-            <a href="{% url 'accounts:register' %}" class="inline-flex items-center justify-center px-5 py-2.5 border border-neutral-300 text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors">
-                Sign Up
-            </a>
-            {% endif %}
-        </div>
     </div>
     
-    <!-- Categories -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-12">
-        <a href="{% url 'posts:post_list' %}?category=ROOMMATE" class="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-colors">
-            <h3 class="text-sm font-medium text-neutral-900">
-                Roommate
-            </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-4);">
+        <!-- Roommate Category -->
+        <a href="{% url 'posts:post_list' %}?category=ROOMMATE" class="category-card group" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); padding: var(--space-6); text-decoration: none; transition: all var(--transition-base); overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 70%); border-radius: 0 0 0 100%; transition: all var(--transition-base);"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); transition: all var(--transition-base);">
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Roommate
+                </h3>
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); line-height: var(--leading-relaxed);">
+                    Find the perfect roommate
+                </p>
+            </div>
         </a>
         
-        <a href="{% url 'posts:post_list' %}?category=FLAT_PG" class="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-colors">
-            <h3 class="text-sm font-medium text-neutral-900">
-                Flat / PG
-            </h3>
+        <!-- Flat/PG Category -->
+        <a href="{% url 'posts:post_list' %}?category=FLAT_PG" class="category-card group" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); padding: var(--space-6); text-decoration: none; transition: all var(--transition-base); overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, transparent 70%); border-radius: 0 0 0 100%; transition: all var(--transition-base);"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); transition: all var(--transition-base);">
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Flat / PG
+                </h3>
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); line-height: var(--leading-relaxed);">
+                    Browse accommodation
+                </p>
+            </div>
         </a>
         
-        <a href="{% url 'posts:post_list' %}?category=EVENT" class="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-colors">
-            <h3 class="text-sm font-medium text-neutral-900">
-                Events
-            </h3>
+        <!-- Events Category -->
+        <a href="{% url 'posts:post_list' %}?category=EVENT" class="category-card group" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); padding: var(--space-6); text-decoration: none; transition: all var(--transition-base); overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, transparent 70%); border-radius: 0 0 0 100%; transition: all var(--transition-base);"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #10B981 0%, #34D399 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); transition: all var(--transition-base);">
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Events
+                </h3>
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); line-height: var(--leading-relaxed);">
+                    Discover campus events
+                </p>
+            </div>
         </a>
         
-        <a href="{% url 'posts:post_list' %}?category=INTERNSHIP" class="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-colors">
-            <h3 class="text-sm font-medium text-neutral-900">
-                Internship
-            </h3>
+        <!-- Internship Category -->
+        <a href="{% url 'posts:post_list' %}?category=INTERNSHIP" class="category-card group" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); padding: var(--space-6); text-decoration: none; transition: all var(--transition-base); overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, transparent 70%); border-radius: 0 0 0 100%; transition: all var(--transition-base);"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); transition: all var(--transition-base);">
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Internship
+                </h3>
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); line-height: var(--leading-relaxed);">
+                    Find opportunities
+                </p>
+            </div>
         </a>
         
-        <a href="{% url 'posts:post_list' %}?category=BUY_SELL" class="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-colors">
-            <h3 class="text-sm font-medium text-neutral-900">
-                Buy & Sell
-            </h3>
+        <!-- Buy & Sell Category -->
+        <a href="{% url 'posts:post_list' %}?category=BUY_SELL" class="category-card group" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); padding: var(--space-6); text-decoration: none; transition: all var(--transition-base); overflow: hidden;">
+            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 70%); border-radius: 0 0 0 100%; transition: all var(--transition-base);"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #EF4444 0%, #F87171 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); transition: all var(--transition-base);">
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Buy & Sell
+                </h3>
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); line-height: var(--leading-relaxed);">
+                    Campus marketplace
+                </p>
+            </div>
         </a>
     </div>
-    
-    <!-- Latest Posts -->
-    {% if latest_posts %}
-    <div class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-semibold text-neutral-900">Recent posts</h2>
-            <a href="{% url 'posts:post_list' %}" class="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
-                View all →
+</div>
+
+<!-- Latest Posts Section -->
+{% if latest_posts %}
+<div style="background: var(--color-neutral-50); padding: var(--space-16) 0;">
+    <div class="max-w-6xl mx-auto" style="padding: 0 var(--space-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-10);">
+            <div>
+                <h2 style="font-size: var(--text-3xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-2);">
+                    Recent Posts
+                </h2>
+                <p style="font-size: var(--text-base); color: var(--text-secondary);">
+                    Latest from your campus community
+                </p>
+            </div>
+            <a href="{% url 'posts:post_list' %}" style="display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--text-brand); text-decoration: none; transition: all var(--transition-fast);" class="hover-arrow">
+                <span>View all</span>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
             </a>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-6);">
             {% for post in latest_posts %}
-            <a href="{% url 'posts:post_detail' post.pk %}" class="block bg-white border border-neutral-200 rounded-lg overflow-hidden hover:border-neutral-300 transition-colors">
-                <div class="aspect-video bg-neutral-100 overflow-hidden">
+            <a href="{% url 'posts:post_detail' post.pk %}" class="post-card" style="display: block; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-2xl); overflow: hidden; text-decoration: none; transition: all var(--transition-base); box-shadow: var(--shadow-sm);">
+                <!-- Image -->
+                <div style="position: relative; aspect-ratio: 16 / 10; background: var(--color-neutral-100); overflow: hidden;">
                     {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-base);" class="post-image">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center bg-neutral-200">
-                        <span class="text-neutral-400 text-2xl font-semibold">{{ post.title|first|upper }}</span>
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-neutral-100) 0%, var(--color-neutral-200) 100%);">
+                        <span style="font-size: var(--text-4xl); font-weight: var(--font-bold); color: var(--text-quaternary);">{{ post.title|first|upper }}</span>
                     </div>
                     {% endif %}
+                    
+                    <!-- Category Badge -->
+                    <div style="position: absolute; top: var(--space-3); left: var(--space-3);">
+                        <span style="display: inline-block; padding: var(--space-1) var(--space-3); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--text-primary); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                            {{ post.get_category_display }}
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="p-4">
-                    <span class="inline-block px-2 py-0.5 bg-neutral-100 text-neutral-700 text-xs font-medium rounded mb-2">
-                        {{ post.get_category_display }}
-                    </span>
+                <!-- Content -->
+                <div style="padding: var(--space-5);">
+                    <h3 style="font-size: var(--text-base); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-3); line-height: var(--leading-snug); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ post.title }}
+                    </h3>
                     
-                    <h3 class="text-sm font-medium text-neutral-900 mb-2 line-clamp-2">{{ post.title }}</h3>
-                    
-                    <div class="flex items-center gap-3 text-xs text-neutral-500 mb-2">
-                        <span class="line-clamp-1">{{ post.location }}</span>
-                        <span>{{ post.created_at|timesince_short }}</span>
+                    <!-- Meta Info -->
+                    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
+                        <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--text-tertiary);">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">{{ post.location }}</span>
+                        </div>
+                        <span style="color: var(--text-quaternary);">•</span>
+                        <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--text-tertiary);">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ post.created_at|timesince_short }}</span>
+                        </div>
                     </div>
                     
-                    <span class="inline-block text-xs px-2 py-0.5 rounded {% if post.days_until_expiry <= 3 %}bg-red-50 text-red-700{% elif post.days_until_expiry <= 7 %}bg-amber-50 text-amber-700{% else %}bg-neutral-100 text-neutral-600{% endif %}">
-                        {{ post.get_expiry_display }}
-                    </span>
+                    <!-- Expiry Badge -->
+                    <div style="display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); font-size: var(--text-xs); font-weight: var(--font-medium); border-radius: var(--radius-lg); {% if post.days_until_expiry <= 3 %}background: var(--color-error-50); color: var(--color-error-700);{% elif post.days_until_expiry <= 7 %}background: var(--color-warning-50); color: var(--color-warning-700);{% else %}background: var(--color-neutral-100); color: var(--text-secondary);{% endif %}">
+                        <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>{{ post.get_expiry_display }}</span>
+                    </div>
                 </div>
             </a>
             {% endfor %}
         </div>
     </div>
-    {% endif %}
+</div>
+{% else %}
+<!-- Empty State -->
+<div style="background: var(--color-neutral-50); padding: var(--space-20) 0;">
+    <div class="max-w-6xl mx-auto" style="padding: 0 var(--space-4); text-align: center;">
+        <div style="width: 4rem; height: 4rem; background: var(--color-neutral-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-6);">
+            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="color: var(--text-tertiary);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+        </div>
+        <h3 style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-3);">
+            No posts yet
+        </h3>
+        <p style="font-size: var(--text-base); color: var(--text-secondary); margin-bottom: var(--space-6); max-width: 28rem; margin-left: auto; margin-right: auto;">
+            Be the first to create a post and start building your campus community.
+        </p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'posts:post_create' %}" class="btn btn-brand">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>Create First Post</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Features / Why CampusHub Section -->
+<div class="max-w-6xl mx-auto" style="padding: var(--space-20) var(--space-4);">
+    <div style="text-align: center; margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-3);">
+            Why Choose CampusHub?
+        </h2>
+        <p style="font-size: var(--text-lg); color: var(--text-secondary); max-width: 36rem; margin: 0 auto;">
+            Everything you need for campus life, simplified
+        </p>
+    </div>
     
-    <!-- About -->
-    <div class="border-t border-neutral-200 pt-12">
-        <div class="flex flex-col sm:flex-row items-start gap-4">
-            <div class="flex-shrink-0">
-                <div class="w-12 h-12 bg-neutral-200 rounded-lg flex items-center justify-center">
-                    <span class="text-lg font-semibold text-neutral-600">RV</span>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-8);">
+        <!-- Feature 1 -->
+        <div style="text-align: center;">
+            <div style="width: 4rem; height: 4rem; background: linear-gradient(135deg, var(--color-brand-100) 0%, var(--color-brand-50) 100%); border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-5);">
+                <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="color: var(--color-brand-600);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-3);">
+                Lightning Fast
+            </h3>
+            <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed);">
+                Find what you need in seconds. No more scrolling through endless WhatsApp messages.
+            </p>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div style="text-align: center;">
+            <div style="width: 4rem; height: 4rem; background: linear-gradient(135deg, var(--color-success-100) 0%, var(--color-success-50) 100%); border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-5);">
+                <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="color: var(--color-success-600);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-3);">
+                Safe & Verified
+            </h3>
+            <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed);">
+                Connect only with verified students from your campus. Your safety is our priority.
+            </p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div style="text-align: center;">
+            <div style="width: 4rem; height: 4rem; background: linear-gradient(135deg, var(--color-warning-100) 0%, var(--color-warning-50) 100%); border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-5);">
+                <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="color: var(--color-warning-600);">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-3);">
+                All in One Place
+            </h3>
+            <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed);">
+                Accommodation, events, opportunities, marketplace — everything organized in one platform.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div style="background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-500) 100%); margin: var(--space-20) 0;">
+    <div class="max-w-4xl mx-auto" style="padding: var(--space-20) var(--space-4); text-align: center;">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-bold); color: white; margin-bottom: var(--space-4);">
+            Ready to join your campus community?
+        </h2>
+        <p style="font-size: var(--text-lg); color: rgba(255, 255, 255, 0.9); margin-bottom: var(--space-8); max-width: 32rem; margin-left: auto; margin-right: auto;">
+            Join hundreds of students already using CampusHub to make campus life easier.
+        </p>
+        <div style="display: flex; flex-direction: column; sm:flex-direction: row; align-items: center; justify-content: center; gap: var(--space-4);" class="flex-col sm:flex-row">
+            {% if user.is_authenticated %}
+            <a href="{% url 'posts:post_create' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); background: white; color: var(--color-brand-600); font-size: var(--text-base); font-weight: var(--font-semibold); border-radius: var(--radius-xl); text-decoration: none; transition: all var(--transition-base); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); min-width: 200px;" class="hover:scale-105">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Create Your Post</span>
+            </a>
+            <a href="{% url 'posts:post_list' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); color: white; font-size: var(--text-base); font-weight: var(--font-semibold); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: var(--radius-xl); text-decoration: none; transition: all var(--transition-base); min-width: 200px;" class="hover:bg-white-20">
+                <span>Browse Posts</span>
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:register' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); background: white; color: var(--color-brand-600); font-size: var(--text-base); font-weight: var(--font-semibold); border-radius: var(--radius-xl); text-decoration: none; transition: all var(--transition-base); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); min-width: 200px;" class="hover:scale-105">
+                <span>Get Started Free</span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </a>
+            <a href="{% url 'posts:post_list' %}" style="display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); color: white; font-size: var(--text-base); font-weight: var(--font-semibold); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: var(--radius-xl); text-decoration: none; transition: all var(--transition-base); min-width: 200px;" class="hover:bg-white-20">
+                <span>Browse Posts</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- About / Footer CTA -->
+<div class="max-w-6xl mx-auto" style="padding: var(--space-16) var(--space-4);">
+    <div style="background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-3xl); padding: var(--space-10); box-shadow: var(--shadow-lg);">
+        <div style="display: flex; flex-direction: column; md:flex-direction: row; align-items: center; gap: var(--space-8);" class="flex-col md:flex-row">
+            <!-- Avatar -->
+            <div style="flex-shrink: 0;">
+                <div style="width: 5rem; height: 5rem; background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-400) 100%); border-radius: var(--radius-2xl); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);">
+                    <span style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: white;">RV</span>
                 </div>
             </div>
             
-            <div class="flex-1">
-                <h3 class="text-base font-semibold text-neutral-900 mb-1">
+            <!-- Content -->
+            <div style="flex: 1; text-align: center; md:text-align: left;" class="text-center md:text-left">
+                <h3 style="font-size: var(--text-xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-2);">
                     Ritesh Vishwakarma
                 </h3>
-                <p class="text-sm text-neutral-600 mb-2">
-                    BCA Student, Full Stack Developer
+                <p style="font-size: var(--text-sm); color: var(--text-tertiary); margin-bottom: var(--space-3);">
+                    BCA Student • Full Stack Developer
                 </p>
-                <p class="text-sm text-neutral-700 mb-3">
-                    Built to solve the problem of scattered WhatsApp groups. CampusHub keeps everything in one place.
+                <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: var(--leading-relaxed); margin-bottom: var(--space-4); max-width: 36rem;">
+                    Built to solve the problem of scattered WhatsApp groups. CampusHub keeps everything in one place — making campus life simpler for everyone.
                 </p>
-                <a href="{% url 'core:about' %}" class="text-sm font-medium text-neutral-900 hover:text-neutral-600 transition-colors">
-                    Read more →
+                <a href="{% url 'core:about' %}" style="display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--text-brand); text-decoration: none; transition: all var(--transition-fast);" class="hover-arrow">
+                    <span>Learn more about the project</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
                 </a>
             </div>
         </div>
     </div>
-    
 </div>
 
 <style>
-.line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* Pulse Animation for Badge */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
+/* Category Card Hover Effects */
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-brand-200);
+}
+
+.category-card:hover > div:first-child {
+    width: 120px;
+    height: 120px;
+}
+
+.category-card:hover > div > div:first-child {
+    transform: scale(1.1);
+}
+
+/* Post Card Hover Effects */
+.post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-brand-200);
+}
+
+.post-card:hover .post-image {
+    transform: scale(1.05);
+}
+
+/* Hover Arrow Animation */
+.hover-arrow:hover svg {
+    transform: translateX(4px);
+}
+
+/* Button Hover Effects */
+.hover\:scale-105:hover {
+    transform: scale(1.05);
+}
+
+.hover\:bg-white-20:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+    .hidden.sm\:block {
+        display: none !important;
+    }
+}
+
+@media (min-width: 640px) {
+    .flex-col.sm\:flex-row {
+        flex-direction: row;
+    }
+    .hidden.sm\:block {
+        display: block !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .text-center.md\:text-left {
+        text-align: left;
+    }
+    .flex-col.md\:flex-row {
+        flex-direction: row;
+    }
 }
 </style>
+    
+</div>
 {% endblock %}
