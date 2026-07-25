@@ -68,6 +68,9 @@
     </script>
     
     {% load static %}
+    <!-- Design System: Load in correct order -->
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     {% block extra_css %}{% endblock %}

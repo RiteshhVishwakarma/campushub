@@ -1,0 +1,450 @@
+{% extends 'base.html' %}
+
+{% block title %}Design System Showcase - CampusHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: var(--space-8) var(--space-4);">
+    
+    <!-- Header -->
+    <div style="margin-bottom: var(--space-12);">
+        <h1 style="font-size: var(--text-5xl); font-weight: var(--font-bold); color: var(--text-primary); margin-bottom: var(--space-3);">
+            CampusHub Design System
+        </h1>
+        <p style="font-size: var(--text-lg); color: var(--text-secondary); max-width: 600px;">
+            A complete component library and design token system for building premium, modern interfaces.
+        </p>
+    </div>
+
+    <!-- Typography Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Typography
+        </h2>
+        
+        <div class="card" style="margin-bottom: var(--space-6);">
+            <div class="card-body">
+                <h1 style="font-size: var(--text-4xl); font-weight: var(--font-bold); margin-bottom: var(--space-3);">
+                    Heading 1 - Display
+                </h1>
+                <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">
+                    Heading 2 - Page Title
+                </h2>
+                <h3 style="font-size: var(--text-2xl); font-weight: var(--font-semibold); margin-bottom: var(--space-3);">
+                    Heading 3 - Section Title
+                </h3>
+                <h4 style="font-size: var(--text-xl); font-weight: var(--font-medium); margin-bottom: var(--space-3);">
+                    Heading 4 - Subsection
+                </h4>
+                <p style="font-size: var(--text-base); color: var(--text-primary); margin-bottom: var(--space-3);">
+                    Body Text - This is regular body text. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+                <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-3);">
+                    Secondary Text - Slightly smaller and muted for less important content.
+                </p>
+                <p style="font-size: var(--text-xs); color: var(--text-tertiary);">
+                    Caption Text - For labels, timestamps, and helper text.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Buttons Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Buttons
+        </h2>
+        
+        <!-- Button Variants -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+            <div class="card-header">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold);">Button Variants</h3>
+            </div>
+            <div class="card-body" style="display: flex; flex-wrap: wrap; gap: var(--space-4);">
+                <button class="btn btn-md btn-primary">Primary</button>
+                <button class="btn btn-md btn-brand">Brand</button>
+                <button class="btn btn-md btn-secondary">Secondary</button>
+                <button class="btn btn-md btn-outline">Outline</button>
+                <button class="btn btn-md btn-ghost">Ghost</button>
+                <button class="btn btn-md btn-danger">Danger</button>
+                <button class="btn btn-md btn-success">Success</button>
+                <button class="btn btn-link">Link Button</button>
+            </div>
+        </div>
+
+        <!-- Button Sizes -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+            <div class="card-header">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold);">Button Sizes</h3>
+            </div>
+            <div class="card-body" style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);">
+                <button class="btn btn-xs btn-brand">Extra Small</button>
+                <button class="btn btn-sm btn-brand">Small</button>
+                <button class="btn btn-md btn-brand">Medium</button>
+                <button class="btn btn-lg btn-brand">Large</button>
+                <button class="btn btn-xl btn-brand">Extra Large</button>
+            </div>
+        </div>
+
+        <!-- Button States -->
+        <div class="card">
+            <div class="card-header">
+                <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold);">Button States</h3>
+            </div>
+            <div class="card-body" style="display: flex; flex-wrap: wrap; gap: var(--space-4);">
+                <button class="btn btn-md btn-brand">Normal</button>
+                <button class="btn btn-md btn-brand" disabled>Disabled</button>
+                <button class="btn btn-md btn-brand btn-loading">Loading</button>
+                <button class="btn btn-md btn-brand btn-full">Full Width</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inputs Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Form Inputs
+        </h2>
+        
+        <div class="card">
+            <div class="card-body" style="display: grid; gap: var(--space-6);">
+                <!-- Text Input -->
+                <div class="input-group">
+                    <label class="input-label input-label-required">Text Input</label>
+                    <input type="text" class="input input-md" placeholder="Enter text...">
+                    <span class="input-helper">This is helper text</span>
+                </div>
+
+                <!-- Input Sizes -->
+                <div>
+                    <label class="input-label">Input Sizes</label>
+                    <div style="display: grid; gap: var(--space-3);">
+                        <input type="text" class="input input-sm" placeholder="Small input">
+                        <input type="text" class="input input-md" placeholder="Medium input (default)">
+                        <input type="text" class="input input-lg" placeholder="Large input">
+                    </div>
+                </div>
+
+                <!-- Input States -->
+                <div>
+                    <label class="input-label">Input States</label>
+                    <div style="display: grid; gap: var(--space-3);">
+                        <input type="text" class="input input-md" placeholder="Normal state">
+                        <input type="text" class="input input-md input-error" placeholder="Error state" value="Invalid input">
+                        <span class="input-error-message">❌ This field has an error</span>
+                        <input type="text" class="input input-md input-success" placeholder="Success state" value="Valid input">
+                        <input type="text" class="input input-md" placeholder="Disabled state" disabled>
+                    </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="input-group">
+                    <label class="input-label">Textarea</label>
+                    <textarea class="textarea" rows="4" placeholder="Enter description..."></textarea>
+                </div>
+
+                <!-- Select -->
+                <div class="input-group">
+                    <label class="input-label">Select Dropdown</label>
+                    <select class="select select-md">
+                        <option>Select option</option>
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </div>
+
+                <!-- File Input -->
+                <div class="input-group">
+                    <label class="input-label">File Upload</label>
+                    <input type="file" class="input input-file">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Cards
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6);">
+            <!-- Basic Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--space-2);">
+                        Basic Card
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+                        A simple card with body content.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Elevated Card -->
+            <div class="card card-elevated">
+                <div class="card-body">
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--space-2);">
+                        Elevated Card
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+                        Card with more shadow depth.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive Card -->
+            <div class="card card-interactive">
+                <div class="card-body">
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--space-2);">
+                        Interactive Card
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+                        Hover me! Card lifts on hover.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card with Header/Footer -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold);">Card Header</h3>
+                </div>
+                <div class="card-body">
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+                        Card with header and footer sections.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-brand">Action</button>
+                </div>
+            </div>
+
+            <!-- Glassmorphic Card -->
+            <div class="card card-glass">
+                <div class="card-body">
+                    <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--space-2);">
+                        Glass Card
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary);">
+                        Card with glassmorphism effect.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Badges
+        </h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <!-- Badge Variants -->
+                <div style="margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Variants</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);">
+                        <span class="badge badge-neutral">Neutral</span>
+                        <span class="badge badge-brand">Brand</span>
+                        <span class="badge badge-success">Success</span>
+                        <span class="badge badge-warning">Warning</span>
+                        <span class="badge badge-error">Error</span>
+                    </div>
+                </div>
+
+                <!-- Badge Sizes -->
+                <div style="margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Sizes</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);">
+                        <span class="badge badge-brand badge-sm">Small</span>
+                        <span class="badge badge-brand">Default</span>
+                        <span class="badge badge-brand badge-lg">Large</span>
+                    </div>
+                </div>
+
+                <!-- Badge with Dot -->
+                <div>
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">With Dot</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);">
+                        <span class="badge badge-success badge-dot">Active</span>
+                        <span class="badge badge-error badge-dot">Expired</span>
+                        <span class="badge badge-warning badge-dot">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Avatars Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Avatars
+        </h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <!-- Avatar Sizes -->
+                <div style="margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Sizes</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);">
+                        <div class="avatar avatar-xs"><span>XS</span></div>
+                        <div class="avatar avatar-sm"><span>SM</span></div>
+                        <div class="avatar avatar-md"><span>MD</span></div>
+                        <div class="avatar avatar-lg"><span>LG</span></div>
+                        <div class="avatar avatar-xl"><span>XL</span></div>
+                        <div class="avatar avatar-2xl"><span>2XL</span></div>
+                    </div>
+                </div>
+
+                <!-- Avatar Variants -->
+                <div>
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Variants</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);">
+                        <div class="avatar avatar-lg"><span>JD</span></div>
+                        <div class="avatar avatar-lg avatar-ring"><span>RV</span></div>
+                        <div class="avatar avatar-lg avatar-square"><span>AB</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading States Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Loading States
+        </h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <!-- Spinners -->
+                <div style="margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Spinners</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);">
+                        <div class="spinner spinner-sm"></div>
+                        <div class="spinner"></div>
+                        <div class="spinner spinner-lg"></div>
+                    </div>
+                </div>
+
+                <!-- Skeleton Loaders -->
+                <div>
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Skeleton Loaders</h4>
+                    <div style="display: grid; gap: var(--space-4); max-width: 500px;">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text" style="width: 70%;"></div>
+                        <div style="display: flex; gap: var(--space-3); align-items: center;">
+                            <div class="skeleton skeleton-circle"></div>
+                            <div style="flex: 1;">
+                                <div class="skeleton skeleton-text" style="margin-bottom: var(--space-2);"></div>
+                                <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton skeleton-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Color Palette Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Color Palette
+        </h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <!-- Neutrals -->
+                <div style="margin-bottom: var(--space-6);">
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Neutral Colors</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: var(--space-3);">
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-neutral-50); border: 1px solid var(--border-primary); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">50</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-neutral-100); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">100</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-neutral-200); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">200</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-neutral-500); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">500</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-neutral-900); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">900</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Colors -->
+                <div>
+                    <h4 style="font-size: var(--text-base); font-weight: var(--font-medium); margin-bottom: var(--space-3);">Brand Colors</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: var(--space-3);">
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-brand-50); border: 1px solid var(--border-primary); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">50</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-brand-500); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">500</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="height: 60px; background-color: var(--color-brand-700); border-radius: var(--radius-md);"></div>
+                            <span style="font-size: var(--text-xs); color: var(--text-tertiary);">700</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spacing Scale Section -->
+    <section style="margin-bottom: var(--space-16);">
+        <h2 style="font-size: var(--text-3xl); font-weight: var(--font-semibold); color: var(--text-primary); margin-bottom: var(--space-6);">
+            Spacing Scale (8px base)
+        </h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <div style="display: grid; gap: var(--space-4);">
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">4px</div>
+                        <div style="height: 20px; width: var(--space-1); background-color: var(--color-brand-500);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">8px</div>
+                        <div style="height: 20px; width: var(--space-2); background-color: var(--color-brand-500);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">16px</div>
+                        <div style="height: 20px; width: var(--space-4); background-color: var(--color-brand-500);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">24px</div>
+                        <div style="height: 20px; width: var(--space-6); background-color: var(--color-brand-500);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">32px</div>
+                        <div style="height: 20px; width: var(--space-8); background-color: var(--color-brand-500);"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-4);">
+                        <div style="width: 100px; font-size: var(--text-sm); color: var(--text-tertiary);">48px</div>
+                        <div style="height: 20px; width: var(--space-12); background-color: var(--color-brand-500);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
