@@ -2,9 +2,11 @@
 Management command to generate realistic development seed data for CampusHub.
 """
 import random
+import os
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
 from accounts.models import Profile
 from posts.models import Post
 
@@ -149,6 +151,7 @@ class Command(BaseCommand):
             seed_users.delete()
             
             self.stdout.write(self.style.SUCCESS(f'Deleted {seed_count} seed users and their related data'))
+            return  # Stop here — don't re-seed
 
         # Generate 30 users
         self.stdout.write(self.style.SUCCESS('Creating seed users...'))
@@ -211,8 +214,21 @@ class Command(BaseCommand):
             'BUY_SELL': 15,
         }
         
+        # Scan available images per category from media/posts/
+        # Expected naming: ROOMMATE_1.jpg, FLAT_PG_1.jpg, EVENT_1.jpg, etc.
+        # Falls back to any image in media/posts/ if category-specific not found
+        posts_dir = os.path.join(settings.MEDIA_ROOT, 'posts')
+        category_images = {}
+        if os.path.isdir(posts_dir):
+            all_images = [f for f in os.listdir(posts_dir)
+                          if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+            for cat in category_distribution.keys():
+                matched = [f for f in all_images if f.lower().startswith(cat.lower())]
+                category_images[cat] = matched if matched else []
+
         for category, count in category_distribution.items():
             template = post_templates[category]
+            available_images = category_images.get(category, [])
             
             for _ in range(count):
                 user = random.choice(seed_users)
@@ -233,6 +249,11 @@ class Command(BaseCommand):
                 days_ago = random.randint(0, 20)
                 created_at = timezone.now() - timezone.timedelta(days=days_ago)
                 
+                # Pick a random image if available for this category
+                image_path = None
+                if available_images:
+                    image_path = 'posts/' + random.choice(available_images)
+                
                 post = Post.objects.create(
                     user=user,
                     title=title,
@@ -241,6 +262,7 @@ class Command(BaseCommand):
                     price=price,
                     location=location,
                     phone=phone,
+                    image=image_path,
                     is_active=True,
                 )
                 
