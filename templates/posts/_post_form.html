@@ -127,36 +127,45 @@ Shared create/edit post form. Include with mode="create" or mode="edit" (edit ne
             </div>
         </section>
 
-        <!-- 3. Photo -->
+        <!-- 3. Photos -->
         <section class="cp-card">
             <header class="cp-card-head">
                 <span class="cp-step">3</span>
                 <div>
-                    <h2>Photo <span class="cp-optional">Optional</span></h2>
-                    <p>Posts with a photo get noticed a lot more.</p>
+                    <h2>Photos <span class="cp-optional" id="cp-photo-count">0/5</span></h2>
+                    <p>Add 1 to 5 photos. The first one is the cover.</p>
                 </div>
             </header>
-            <label class="cp-drop {% if form.image.errors %}has-error{% endif %}{% if mode == 'edit' and post.image %} has-file{% endif %}" id="cp-drop" for="{{ form.image.id_for_label }}"{% if mode == 'edit' and post.image %} data-initial="{{ post.image.url }}"{% endif %}>
-                <input type="file" name="{{ form.image.html_name }}" id="{{ form.image.id_for_label }}" accept="image/*">
-                <div class="cp-drop-empty">
-                    <span class="cp-drop-icon">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </span>
-                    <p><strong>Click to upload</strong> or drag and drop</p>
-                    <p class="cp-hint">JPG, PNG or WEBP. Landscape photos look best.</p>
-                </div>
-                <div class="cp-drop-filled">
-                    <img id="cp-drop-img" alt="Selected photo preview"{% if mode == 'edit' and post.image %} src="{{ post.image.url }}"{% endif %}>
-                    <div class="cp-drop-bar">
-                        <span id="cp-drop-name">{% if mode == 'edit' and post.image %}Current photo{% endif %}</span>
-                        <span class="cp-drop-btns">
-                            <span class="cp-link-btn cp-link-btn--brand">Replace</span>
-                            <button type="button" class="cp-link-btn" id="cp-drop-remove" hidden>{% if mode == 'edit' and post.image %}Undo{% else %}Remove{% endif %}</button>
-                        </span>
-                    </div>
-                </div>
-            </label>
-            {% for error in form.image.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+            <div class="cp-photos {% if form.images.errors %}has-error{% endif %}" id="cp-photos">
+                {% if mode == 'edit' %}
+                    {% if post.image %}
+                    <label class="cp-thumb" data-src="{{ post.image.url }}" title="Click to remove">
+                        <img src="{{ post.image.url }}" alt="Current photo" onerror="this.style.visibility='hidden'">
+                        <input type="checkbox" name="remove_images" value="cover">
+                        <span class="cp-thumb-x" aria-hidden="true">&times;</span>
+                        <span class="cp-thumb-undo">Removed · undo</span>
+                    </label>
+                    {% endif %}
+                    {% for extra in post.extra_images.all %}
+                    <label class="cp-thumb" data-src="{{ extra.image.url }}" title="Click to remove">
+                        <img src="{{ extra.image.url }}" alt="Current photo" onerror="this.style.visibility='hidden'">
+                        <input type="checkbox" name="remove_images" value="{{ extra.pk }}">
+                        <span class="cp-thumb-x" aria-hidden="true">&times;</span>
+                        <span class="cp-thumb-undo">Removed · undo</span>
+                    </label>
+                    {% endfor %}
+                {% endif %}
+                <label class="cp-add" id="cp-add" for="id_images">
+                    <input type="file" name="{{ form.images.html_name }}" id="id_images" accept="image/*" multiple>
+                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    <span>Add photo</span>
+                </label>
+            </div>
+            {% if form.images.errors %}
+                {% for error in form.images.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+            {% else %}
+            <p class="cp-hint">JPG, PNG or WEBP, up to 5 MB each. You can also drag photos here.</p>
+            {% endif %}
         </section>
 
         <!-- 4. Contact -->
@@ -189,7 +198,7 @@ Shared create/edit post form. Include with mode="create" or mode="edit" (edit ne
         <div class="cp-preview">
             <div class="cp-preview-media">
                 <div class="cp-preview-ph" id="pv-ph"><span>?</span></div>
-                <img id="pv-img" alt=""{% if mode == 'edit' and post.image %} src="{{ post.image.url }}" class="is-set"{% endif %}>
+                <img id="pv-img" alt="">
                 <span class="cp-preview-cat" id="pv-cat" hidden></span>
             </div>
             <div class="cp-preview-body">
@@ -336,28 +345,35 @@ html:has(.cp-page) { overflow-x: clip; }
 .cp-alert { padding: .8rem .9rem; border-radius: .75rem; font-size: .875rem; color: #991B1B; background: #FEF2F2; border: 1px solid #FECACA; }
 .cp-page input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-/* Dropzone */
-.cp-drop {
-    position: relative; display: block; border: 1.5px dashed #CBD5E1; border-radius: .9rem; background: var(--soft);
-    cursor: pointer; overflow: hidden; transition: border-color .15s ease, background-color .15s ease;
+/* Photos */
+.cp-photos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .65rem; border-radius: .9rem; }
+.cp-photos.is-over { outline: 2px dashed var(--brand); outline-offset: 4px; }
+.cp-thumb, .cp-add { position: relative; aspect-ratio: 1; border-radius: .8rem; overflow: hidden; }
+.cp-thumb { border: 1px solid var(--line); background: #F1F5F9; cursor: pointer; }
+.cp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .15s ease, filter .15s ease; }
+.cp-thumb input { position: absolute; opacity: 0; pointer-events: none; }
+.cp-thumb-x {
+    position: absolute; top: .35rem; right: .35rem; width: 1.5rem; height: 1.5rem; border: 0; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1;
+    color: #fff; background: rgba(15,23,42,.7); cursor: pointer;
 }
-.cp-drop:hover, .cp-drop.is-over { border-color: var(--brand); background: #F5F8FF; }
-.cp-drop.has-error { border-color: var(--danger); }
-.cp-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.cp-drop-empty { padding: 2rem 1rem; text-align: center; font-size: .9rem; color: var(--ink-2); }
-.cp-drop-empty strong { color: var(--brand); }
-.cp-drop-icon { width: 2.75rem; height: 2.75rem; margin: 0 auto .75rem; border-radius: .8rem; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--line); color: var(--muted); }
-.cp-drop-filled { display: none; }
-.cp-drop.has-file { border-style: solid; background: #fff; }
-.cp-drop.has-file .cp-drop-empty { display: none; }
-.cp-drop.has-file .cp-drop-filled { display: block; }
-.cp-drop-filled img { display: block; width: 100%; max-height: 20rem; object-fit: cover; }
-.cp-drop-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .7rem .9rem; font-size: .82rem; color: var(--ink-2); border-top: 1px solid var(--line); }
-.cp-drop-bar span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cp-link-btn { flex: none; border: 0; background: none; font-size: .82rem; font-weight: 600; color: var(--danger); cursor: pointer; }
-.cp-link-btn--brand { color: var(--brand); }
-.cp-link-btn[hidden] { display: none; }
-.cp-drop-btns { display: flex; gap: 1rem; flex: none; }
+.cp-thumb-undo { display: none; position: absolute; inset: auto 0 0; padding: .3rem; font-size: .7rem; font-weight: 600; text-align: center; color: #fff; background: rgba(220,38,38,.9); }
+.cp-thumb:has(input:checked) img { opacity: .35; filter: grayscale(1); }
+.cp-thumb:has(input:checked) .cp-thumb-x { display: none; }
+.cp-thumb:has(input:checked) .cp-thumb-undo { display: block; }
+.cp-thumb.is-cover::after {
+    content: "Cover"; position: absolute; left: .35rem; bottom: .35rem; padding: .1rem .45rem; border-radius: .4rem;
+    font-size: .68rem; font-weight: 700; color: #fff; background: var(--brand);
+}
+.cp-add {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3rem;
+    border: 1.5px dashed #CBD5E1; background: var(--soft); color: var(--muted); font-size: .78rem; font-weight: 600; cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+}
+.cp-add:hover, .cp-add:has(input:focus-visible) { border-color: var(--brand); color: var(--brand); background: #F5F8FF; }
+.cp-add[hidden] { display: none; }
+.cp-add input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.cp-photos.has-error .cp-add { border-color: var(--danger); }
 .cp-lead-exp { font-weight: 600; color: var(--ink-2); }
 .cp-lead-exp.is-urgent { color: var(--danger); }
 .cp-delete { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; font-size: .82rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: .25rem; }
@@ -424,6 +440,7 @@ html:has(.cp-page) { overflow-x: clip; }
     .cp-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cp-cats .cp-cat:last-child { grid-column: span 2; }
     .cp-grid-2 { grid-template-columns: 1fr; }
+    .cp-photos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 </style>
 
@@ -448,7 +465,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var desc = $('{{ form.description.id_for_label }}');
     var price = $('{{ form.price.id_for_label }}');
     var loc = $('{{ form.location.id_for_label }}');
-    var image = $('{{ form.image.id_for_label }}');
 
     function selectedCat() {
         var c = form.querySelector('input[name="{{ form.category.html_name }}"]:checked');
@@ -489,46 +505,70 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('change', render);
     render();
 
-    // Image dropzone + preview
-    var drop = $('cp-drop');
-    function showFile(file) {
-        if (!file || !file.type.startsWith('image/')) return;
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('cp-drop-img').src = e.target.result;
-            $('pv-img').src = e.target.result;
-            $('pv-img').classList.add('is-set');
-            $('cp-drop-name').textContent = file.name;
-            $('cp-drop-remove').hidden = false;
-            drop.classList.add('has-file');
-        };
-        reader.readAsDataURL(file);
+    // Photos: up to 5 total (kept existing + newly picked)
+    var MAX = 5;
+    var box = $('cp-photos'), input = $('id_images'), add = $('cp-add');
+    var picked = [];
+
+    function syncInput() {
+        var dt = new DataTransfer();
+        picked.forEach(function (p) { dt.items.add(p.file); });
+        input.files = dt.files;
     }
-    image.addEventListener('change', function () { showFile(image.files[0]); });
+    function kept() {
+        return Array.prototype.filter.call(box.querySelectorAll('.cp-thumb'), function (t) {
+            var cb = t.querySelector('input[type=checkbox]');
+            return !cb || !cb.checked;
+        });
+    }
+    function refreshPhotos() {
+        var live = kept();
+        box.querySelectorAll('.cp-thumb').forEach(function (t) { t.classList.remove('is-cover'); });
+        if (live[0]) live[0].classList.add('is-cover');
+        $('cp-photo-count').textContent = live.length + '/' + MAX;
+        add.hidden = live.length >= MAX;
+        var pv = $('pv-img');
+        if (live[0]) { pv.src = live[0].dataset.src; pv.classList.add('is-set'); }
+        else { pv.removeAttribute('src'); pv.classList.remove('is-set'); }
+    }
+    function addFiles(files) {
+        Array.prototype.forEach.call(files, function (file) {
+            if (!file.type.startsWith('image/') || kept().length >= MAX) return;
+            var entry = { file: file, url: URL.createObjectURL(file) };
+            picked.push(entry);
+            var thumb = document.createElement('div');
+            thumb.className = 'cp-thumb';
+            thumb.dataset.src = entry.url;
+            thumb.innerHTML = '<img alt=""><button type="button" class="cp-thumb-x" aria-label="Remove photo">&times;</button>';
+            thumb.querySelector('img').src = entry.url;
+            thumb.querySelector('button').addEventListener('click', function () {
+                picked.splice(picked.indexOf(entry), 1);
+                URL.revokeObjectURL(entry.url);
+                thumb.remove();
+                syncInput(); refreshPhotos();
+            });
+            box.insertBefore(thumb, add);
+        });
+        syncInput(); refreshPhotos();
+    }
+    input.addEventListener('change', function () {
+        var files = Array.prototype.slice.call(input.files);
+        syncInput(); // the picker replaces the selection, so put earlier picks back first
+        addFiles(files);
+    });
+    box.addEventListener('change', function (e) {
+        if (e.target.name !== 'remove_images') return;
+        // Undoing a removal must not push the total over the limit
+        if (!e.target.checked && kept().length > MAX) { e.target.checked = true; }
+        refreshPhotos();
+    });
     ['dragenter', 'dragover'].forEach(function (ev) {
-        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); });
+        box.addEventListener(ev, function (e) { e.preventDefault(); box.classList.add('is-over'); });
     });
     ['dragleave', 'drop'].forEach(function (ev) {
-        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('is-over'); });
+        box.addEventListener(ev, function (e) { e.preventDefault(); box.classList.remove('is-over'); });
     });
-    drop.addEventListener('drop', function (e) {
-        if (e.dataTransfer.files.length) { image.files = e.dataTransfer.files; showFile(image.files[0]); }
-    });
-    // Drop a newly picked file; in edit mode this restores the current photo
-    $('cp-drop-remove').addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        image.value = '';
-        $('cp-drop-remove').hidden = true;
-        var initial = drop.dataset.initial;
-        if (initial) {
-            $('cp-drop-img').src = initial;
-            $('pv-img').src = initial;
-            $('cp-drop-name').textContent = 'Current photo';
-        } else {
-            drop.classList.remove('has-file');
-            $('pv-img').classList.remove('is-set');
-            $('pv-img').removeAttribute('src');
-        }
-    });
+    box.addEventListener('drop', function (e) { addFiles(e.dataTransfer.files); });
+    refreshPhotos();
 });
 </script>

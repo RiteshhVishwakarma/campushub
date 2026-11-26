@@ -44,12 +44,30 @@
     <div class="pd-layout">
         <!-- ============ MAIN ============ -->
         <div class="pd-main">
-            <div class="pd-media">
+            {% with photos=post.gallery %}
+            <div class="pd-media" id="pd-carousel">
                 <div class="pd-ph"><span>{{ post.title|first|upper }}</span></div>
-                {% if post.image %}
-                <img src="{{ post.image.url }}" alt="{{ post.title }}" onerror="this.remove()">
+                {% if photos %}
+                <div class="pd-track" id="pd-track">
+                    {% for photo in photos %}
+                    <div class="pd-slide"><img src="{{ photo.url }}" alt="{{ post.title }} photo {{ forloop.counter }}" {% if not forloop.first %}loading="lazy" {% endif %}onerror="this.remove()"></div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if photos|length > 1 %}
+                <button type="button" class="pd-nav pd-nav--prev" data-dir="-1" aria-label="Previous photo">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button type="button" class="pd-nav pd-nav--next" data-dir="1" aria-label="Next photo">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <div class="pd-dots" id="pd-dots">
+                    {% for photo in photos %}<button type="button" data-i="{{ forloop.counter0 }}" aria-label="Photo {{ forloop.counter }}"{% if forloop.first %} class="is-on"{% endif %}></button>{% endfor %}
+                </div>
+                <span class="pd-count" id="pd-count">1/{{ photos|length }}</span>
                 {% endif %}
             </div>
+            {% endwith %}
 
             <section class="pd-section">
                 <h2 class="pd-h2">About this {% if post.category == 'EVENT' %}event{% elif post.category == 'INTERNSHIP' %}internship{% elif post.category == 'BUY_SELL' %}item{% else %}listing{% endif %}</h2>
@@ -240,7 +258,27 @@
     position: relative; aspect-ratio: 16 / 10; border-radius: 1.25rem; overflow: hidden;
     background: #F1F5F9; border: 1px solid var(--line);
 }
+.pd-track {
+    position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+    scroll-behavior: smooth; scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.pd-track::-webkit-scrollbar { display: none; }
+.pd-slide { position: relative; flex: 0 0 100%; scroll-snap-align: start; }
 .pd-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pd-nav {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: var(--ink, #0F172A);
+    background: rgba(255,255,255,.92); box-shadow: 0 2px 8px rgba(15,23,42,.18); cursor: pointer;
+    transition: opacity .15s ease;
+}
+.pd-nav--prev { left: .75rem; }
+.pd-nav--next { right: .75rem; }
+.pd-nav:disabled { opacity: 0; pointer-events: none; }
+.pd-dots { position: absolute; left: 50%; bottom: .8rem; transform: translateX(-50%); display: flex; gap: .4rem; }
+.pd-dots button { width: .5rem; height: .5rem; padding: 0; border: 0; border-radius: 99px; background: rgba(255,255,255,.6); cursor: pointer; transition: width .2s ease, background-color .2s ease; }
+.pd-dots button.is-on { width: 1.25rem; background: #fff; }
+.pd-count { position: absolute; top: .75rem; right: .75rem; padding: .15rem .55rem; border-radius: 99px; font-size: .75rem; font-weight: 600; color: #fff; background: rgba(15,23,42,.6); }
+@media (hover: none) { .pd-nav { display: none; } }
 .pd-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #EEF2FF, #E0F2FE); }
 .pd-ph span { font-size: 4rem; font-weight: 800; color: #A5B4FC; }
 
@@ -350,4 +388,30 @@
     .pd-crumb-current { display: none; }
 }
 </style>
+
+<script>
+(function () {
+    var track = document.getElementById('pd-track');
+    var dots = document.getElementById('pd-dots');
+    if (!track || !dots) return;
+    var root = document.getElementById('pd-carousel');
+    var count = document.getElementById('pd-count');
+    var n = track.children.length;
+    function current() { return Math.round(track.scrollLeft / track.clientWidth); }
+    function go(i) { track.scrollTo({ left: Math.max(0, Math.min(n - 1, i)) * track.clientWidth }); }
+    function update() {
+        var i = current();
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('is-on', k === i); });
+        count.textContent = (i + 1) + '/' + n;
+        root.querySelector('.pd-nav--prev').disabled = i === 0;
+        root.querySelector('.pd-nav--next').disabled = i === n - 1;
+    }
+    root.querySelectorAll('.pd-nav').forEach(function (b) {
+        b.addEventListener('click', function () { go(current() + Number(b.dataset.dir)); });
+    });
+    dots.addEventListener('click', function (e) { if (e.target.dataset.i) go(Number(e.target.dataset.i)); });
+    track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
+    update();
+})();
+</script>
 {% endblock %}

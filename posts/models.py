@@ -98,6 +98,30 @@ class Post(models.Model):
         else:
             return f"Expires in {days} days"
 
+    def gallery(self):
+        """All photos in display order: the cover first, then the extra ones."""
+        photos = [self.image] if self.image else []
+        photos += [extra.image for extra in self.extra_images.all()]
+        return photos
+
+
+class PostImage(models.Model):
+    """Extra photos for a post (the cover lives on Post.image)."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='extra_images',
+    )
+    image = models.ImageField(upload_to='posts/')
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"Photo {self.order + 1} of {self.post.title}"
+
 
 class Report(models.Model):
     """Report model for flagging inappropriate posts"""

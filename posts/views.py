@@ -76,9 +76,8 @@ class PostCreateView(LoginRequiredMixin, View):
     def post(self, request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
+            form.instance.user = request.user
+            post = form.save()
             messages.success(request, 'Your post has been created successfully!')
             return redirect('posts:post_detail', pk=post.pk)
         return render(request, self.template_name, {'form': form})
@@ -98,7 +97,9 @@ class PostDetailView(View):
     }
 
     def get(self, request, pk):
-        post = get_object_or_404(Post, pk=pk, is_active=True)
+        post = get_object_or_404(
+            Post.objects.prefetch_related('extra_images'), pk=pk, is_active=True
+        )
         is_owner = request.user.is_authenticated and post.user == request.user
         
         # Determine what phone info to send based on authentication
