@@ -51,7 +51,7 @@
                     </a>
                     
                     <!-- Notifications Bell (Placeholder) -->
-                    <button type="button" style="position: relative; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); border-radius: var(--radius-lg); transition: all var(--transition-fast);" class="hover:bg-neutral-100 hover:text-neutral-900 hidden md:flex">
+                    <button type="button" style="position: relative; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center; color: var(--text-tertiary); border-radius: var(--radius-lg); transition: all var(--transition-fast);" class="hover:bg-neutral-100 hover:text-neutral-900 hidden md:flex">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>
@@ -61,7 +61,7 @@
                     
                     <!-- User Profile Button -->
                     <button id="userMenuBtn" type="button" style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3); border-radius: var(--radius-xl); transition: all var(--transition-fast); border: none; background: transparent; cursor: pointer;" class="hover:bg-neutral-100">
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; margin-right: var(--space-1);" class="hidden md:flex">
+                        <div style="flex-direction: column; align-items: flex-end; margin-right: var(--space-1);" class="hidden md:flex">
                             <span style="font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--text-primary); line-height: 1;">
                                 {{ user.first_name|default:user.username }}
                             </span>

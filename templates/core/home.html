@@ -302,7 +302,7 @@
 </section>
 
 <!-- ============ CTA ============ -->
-<section class="lp-wrap">
+<section class="lp-wrap lp-cta-wrap">
     <div class="lp-cta lp-reveal">
         <div class="lp-cta-grid" aria-hidden="true"></div>
         <div class="lp-cta-glow" aria-hidden="true"></div>
@@ -803,7 +803,9 @@ a.lp-mini:hover { border-color: #C7D2FE; background: #FAFBFF; }
     .lp-hero-inner { gap: 3rem; }
 }
 @media (max-width: 900px) {
-    .lp-hero-inner { grid-template-columns: 1fr; padding-top: 4rem; padding-bottom: 5rem; }
+    /* minmax(0,1fr): stop the preview window's content from widening the column past the screen */
+    .lp-hero-inner { grid-template-columns: minmax(0, 1fr); padding-top: 4rem; padding-bottom: 5rem; }
+    .lp-hero-copy, .lp-hero-visual { min-width: 0; }
     .lp-hero-copy { text-align: center; }
     .lp-lead { margin: 0 auto; }
     .lp-cta-row { justify-content: center; }
@@ -819,7 +821,14 @@ a.lp-mini:hover { border-color: #C7D2FE; background: #FAFBFF; }
     .lp-section, .lp-band { padding: 4.5rem 0; }
 }
 @media (max-width: 640px) {
-    .lp-cats { grid-template-columns: repeat(2, 1fr); }
+    .lp-wrap { padding-left: 1rem; padding-right: 1rem; }
+    .lp-cta-wrap { padding: 0; } /* already inside the page container's padding */
+    .lp-hero-inner { padding-top: 2.75rem; padding-bottom: 4rem; gap: 2.5rem; }
+    .lp-h1 { font-size: clamp(2rem, 9vw, 2.4rem); }
+    .lp-lead { font-size: 1rem; }
+    .lp-window-url { display: none; }
+    .lp-mini-time { display: none; }
+    .lp-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lp-cats .lp-cat:last-child { grid-column: span 2; }
     .lp-posts { grid-template-columns: 1fr; }
     .lp-stats { gap: 1.5rem; }

@@ -354,6 +354,8 @@ html:has(.bp-page) { overflow-x: clip; }
 /* Responsive */
 @media (max-width: 1024px) { .bp-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) {
+    .bp-wrap { padding-left: 1rem; padding-right: 1rem; }
+    .bp-body { padding-left: 0; padding-right: 0; } /* page container already pads it */
     .bp-head { padding: 1.75rem 0 1.5rem; }
     .bp-head-row { align-items: flex-start; }
     .bp-head-row .bp-btn { height: 2.5rem; padding: 0 .9rem; }

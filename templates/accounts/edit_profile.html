@@ -260,6 +260,14 @@ html:has(.ep-page) { overflow-x: clip; }
 .ep-savebar.is-dirty .ep-savebar-note { visibility: visible; }
 .ep-savebar-actions { display: flex; gap: .5rem; margin-left: auto; }
 
+@media (max-width: 640px) {
+    .ep-wrap { padding-left: 1rem; padding-right: 1rem; }
+    .ep-form { padding-left: 0; padding-right: 0; } /* page container already pads it */
+    .ep-photo { align-items: flex-start; }
+    .ep-avatar { width: 4rem; height: 4rem; font-size: 1.4rem; }
+    .ep-readonly > div { flex-direction: column; gap: .15rem; }
+    .ep-readonly dd { text-align: left; }
+}
 @media (max-width: 768px) {
     .ep-card { grid-template-columns: 1fr; gap: 1rem; padding: 1.25rem; }
     .ep-savebar { bottom: 5.5rem; }

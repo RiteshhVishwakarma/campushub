@@ -415,6 +415,10 @@ html:has(.cp-page) { overflow-x: clip; }
     .cp-actions { flex-direction: row-reverse; }
     .cp-actions .cp-btn { flex: 1; }
 }
+@media (max-width: 640px) {
+    .cp-wrap { padding-left: 1rem; padding-right: 1rem; }
+    .cp-layout { padding-left: 0; padding-right: 0; } /* page container already pads it */
+}
 @media (max-width: 560px) {
     .cp-card { padding: 1.15rem; }
     .cp-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
