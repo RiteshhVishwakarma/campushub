@@ -1,358 +1,86 @@
 # CampusHub
 
-A Django-based student community platform for discovering roommates, flats, internships, events, and marketplace listings.
-
-## 🚀 Status: Production Ready
-
-CampusHub is fully developed and production-ready with proper environment configuration, security measures, and development tooling.
-
----
+A Django site where students find roommates, flats/PGs, events and internships, and buy or sell things on campus.
 
 ## Features
 
-### Core Functionality
-- **User Authentication**: Registration, login, logout with profile management
-- **Post Management**: Create, read, update, delete posts across 5 categories
-- **Categories**: Roommate, Flat/PG, Events, Internship, Buy & Sell
-- **Search & Filters**: Search by title/description, filter by category and location
-- **Pagination**: 15 posts per page with filter preservation
-- **Post Expiry**: Automatic 30-day expiry system
-- **Profile System**: User profiles with photos, bio, phone, and college info
-- **Image Uploads**: Support for profile photos and post images
-- **Responsive Design**: Mobile-first with Tailwind CSS
+- **Accounts:** register, log in and out, and a profile with photo, bio, phone and college
+- **Posts** in 5 categories: Roommate, Flat / PG, Event, Internship, Buy & Sell
+- **1 to 5 photos per post**, shown as a carousel on the post page (the first photo is the cover)
+- **Search and filters** by keyword, category and location, 15 posts per page
+- **Contact protection:** the phone number is masked until the visitor signs in
+- **Reports:** signed-in users can flag a post, once per post
+- **Auto-expiry:** posts expire 30 days after they are created
+- Responsive layout with a mobile bottom nav
 
-### Additional Features
-- Realistic seed data generation (30 users + 100 posts)
-- Production-ready settings structure
-- Environment-based configuration
-- PostgreSQL support for production
-- Full security headers
-- Clean, minimal UI design
+## Tech stack
 
----
+Django 6 · SQLite (dev) / PostgreSQL (prod) · Cloudinary (uploaded images in prod) · WhiteNoise (static files) · Gunicorn · Tailwind CSS
 
-## Quick Start
+## Run locally
 
-### Development Setup
+**Windows, one click:** double-click `run_campushub.bat`. It creates the virtualenv, installs packages, runs migrations, loads sample data the first time and opens http://127.0.0.1:8000.
 
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd campushubadypu
-```
+**Manual:**
 
-2. **Create virtual environment**
 ```bash
 python -m venv env
-
-# Windows
-env\Scripts\activate
-
-# Linux/Mac
-source env/bin/activate
-```
-
-3. **Install dependencies**
-```bash
+env\Scripts\activate          # macOS/Linux: source env/bin/activate
 pip install -r requirements.txt
-```
-
-4. **Run migrations**
-```bash
 python manage.py migrate
-```
-
-5. **Generate seed data (optional but recommended)**
-```bash
-python manage.py seed_data
-```
-
-6. **Run development server**
-```bash
+python manage.py seed_data    # optional sample data
 python manage.py runserver
 ```
 
-7. **Access the application**
-- Visit: `http://localhost:8000`
-- Login with: `seed_user_1` / `seedpass123`
+You don't need a `.env` file for development. The dev settings use SQLite and save uploads in `media/`.
 
----
+**Sample login** (after `seed_data`): `seed_user_1` … `seed_user_30`, password `seedpass123`.
 
-## Production Deployment
+## Management commands
 
-### Prerequisites
-- Python 3.8+
-- PostgreSQL database
-- Web server (Nginx/Apache)
-- WSGI server (Gunicorn/uWSGI)
+| Command | What it does |
+|---|---|
+| `python manage.py seed_data` | Creates 30 users and 100 posts with photos (`--clear` removes them first) |
+| `python manage.py expire_posts` | Marks posts older than 30 days as inactive (`--dry-run` only shows which ones) |
+| `python manage.py create_missing_profiles` | Creates a profile for any user that has none |
+| `python manage.py test` | Runs the tests |
 
-### Setup Steps
-
-1. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-2. **Create .env file**
-```bash
-cp .env.example .env
-# Edit .env with your production values
-```
-
-3. **Generate SECRET_KEY**
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-4. **Set environment variables in .env**
-```env
-DJANGO_ENV=production
-SECRET_KEY=your-generated-secret-key
-DEBUG=False
-DATABASE_URL=postgres://user:password@host:port/dbname
-ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-```
-
-5. **Run migrations**
-```bash
-export DJANGO_ENV=production  # Windows: set DJANGO_ENV=production
-python manage.py migrate
-```
-
-6. **Collect static files**
-```bash
-python manage.py collectstatic --no-input
-```
-
-7. **Create superuser**
-```bash
-python manage.py createsuperuser
-```
-
-8. **Run with Gunicorn**
-```bash
-pip install gunicorn
-gunicorn campushub.wsgi:application
-```
-
-For detailed deployment instructions, see [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
-
----
-
-## Project Structure
+## Project layout
 
 ```
-campushubadypu/
-├── campushub/              # Main project configuration
-│   └── settings/           # Environment-based settings
-│       ├── base.py         # Common settings
-│       ├── development.py  # Development settings
-│       └── production.py   # Production settings
-├── core/                   # Landing and about pages
-├── accounts/               # User authentication & profiles
-├── posts/                  # Posts functionality
-├── static/                 # Static files (CSS, JS)
-├── media/                  # User uploads
-├── templates/              # HTML templates
-└── requirements.txt        # Python dependencies
+campushub/settings/   base.py, development.py, production.py (picked with DJANGO_ENV)
+core/                 home and about pages, seed_data command
+accounts/             registration, login, profiles
+posts/                posts, photos, reports, expire_posts command
+templates/            HTML templates, one folder per app
+static/               CSS and images
+media/posts/          sample photos used by seed_data
 ```
 
----
+## Data models
 
-## Management Commands
+- **Profile:** one per user, created automatically. Holds phone, bio, college and profile photo.
+- **Post:** category, title, description, optional price, location, phone, cover `image` and `is_active`.
+- **PostImage:** the extra photos of a post (up to 4 more), in order.
+- **Report:** a user flags a post with a reason. Each user can report a post only once.
 
-### Seed Data
-```bash
-# Generate realistic development data (30 users + 100 posts)
-python manage.py seed_data
+## Main URLs
 
-# Clear existing seed data and regenerate
-python manage.py seed_data --clear
-```
+| URL | Page |
+|---|---|
+| `/` · `/about/` | Home, About |
+| `/accounts/register/` · `/accounts/login/` | Sign up, sign in |
+| `/accounts/profile/` · `/accounts/profile/edit/` | Your profile |
+| `/posts/` · `/posts/create/` · `/posts/my-posts/` | Browse, new post, your posts |
+| `/posts/<id>/` (`/edit/`, `/delete/`, `/report/`) | A post and its actions |
+| `/admin/` | Django admin |
 
-### Post Expiry
-```bash
-# Mark expired posts (>30 days) as inactive
-python manage.py expire_posts
+## Deployment
 
-# Dry run (show what would be expired)
-python manage.py expire_posts --dry-run
-```
-
-### Profile Management
-```bash
-# Create profiles for users missing them
-python manage.py create_missing_profiles
-```
-
----
-
-## Tech Stack
-
-- **Backend**: Django 6.0.7
-- **Database**: SQLite (development), PostgreSQL (production)
-- **Frontend**: HTML, Tailwind CSS, JavaScript
-- **Image Processing**: Pillow
-- **Environment Management**: django-environ
-- **Database Adapter**: psycopg2-binary (PostgreSQL)
-
----
-
-## Environment Configuration
-
-### Development (Default)
-- DEBUG mode enabled
-- SQLite database
-- Runs on `localhost:8000`
-- No environment variables needed
-
-### Production
-- DEBUG mode disabled
-- PostgreSQL database
-- Full security headers
-- Environment variables required
-
----
-
-## Security Features
-
-### Production Security (Automatic)
-- SSL/HTTPS enforcement
-- Secure session cookies
-- Secure CSRF cookies
-- XSS protection
-- Content type sniffing protection
-- Clickjacking protection (X-Frame-Options)
-- HSTS with preload
-- Environment-based secrets
-
----
-
-## Database Models
-
-### User (Django Built-in)
-Standard Django user model
-
-### Profile
-- Extended user information
-- Phone, bio, college, profile photo
-- Auto-created via signals
-
-### Post
-- Title, description, category
-- Price (optional), location, phone
-- Image upload support
-- 30-day expiry system
-
-### Report
-- Flag inappropriate posts
-- Multiple report reasons
-- One report per user per post
-
----
-
-## URL Routes
-
-```
-/                              Landing page
-/about/                        About page
-/accounts/register/            User registration
-/accounts/login/               User login
-/accounts/profile/<username>/  User profile
-/posts/                        Browse posts
-/posts/create/                 Create post
-/posts/<id>/                   Post detail
-/admin/                        Admin panel
-```
-
----
-
-## Documentation
-
-Complete documentation available:
-
-- **[PRODUCTION_READY_COMPLETE.md](PRODUCTION_READY_COMPLETE.md)** - Complete production guide
-- **[PRODUCTION_QUICK_REFERENCE.md](PRODUCTION_QUICK_REFERENCE.md)** - Quick command reference
-- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Step-by-step deployment
-- **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** - Detailed project structure
-- **[FINAL_IMPLEMENTATION_SUMMARY.md](FINAL_IMPLEMENTATION_SUMMARY.md)** - Implementation summary
-
----
-
-## Testing Credentials
-
-After running `python manage.py seed_data`:
-
-- **Username**: `seed_user_1` to `seed_user_30`
-- **Password**: `seedpass123`
-
----
-
-## Development Workflow
-
-```bash
-# Start development server
-python manage.py runserver
-
-# Generate seed data
-python manage.py seed_data
-
-# Create migrations
-python manage.py makemigrations
-
-# Apply migrations
-python manage.py migrate
-
-# Create superuser
-python manage.py createsuperuser
-
-# Run Django shell
-python manage.py shell
-```
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
----
-
-## Support
-
-For issues, questions, or contributions:
-- Check documentation files
-- Review deployment checklist
-- Consult quick reference guide
-
----
-
-## License
-
-This project is for educational purposes.
-
----
+The site deploys to Render from `render.yaml`. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Author
 
-**Ritesh Vishwakarma**  
-BCA Student • Full Stack Developer
+**Ritesh Vishwakarma** · [GitHub](https://github.com/RiteshhVishwakarma)
 
-Building practical products that solve real student problems.
-
-- GitHub: [@rietshhvishwakarma](https://github.com/rietshhvishwakarma)
-
----
-
-## Acknowledgments
-
-Built with Django and modern web technologies to serve the student community.
-
----
-
-**Project Status**: ✅ Production Ready  
-**Last Updated**: 2026-07-24
+This project is for educational use.
