@@ -74,6 +74,9 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     {% block extra_css %}{% endblock %}
+
+    <!-- Lenis smooth scrolling (https://github.com/darkroomengineering/lenis) -->
+    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.28/dist/lenis.css">
 </head>
 <body class="bg-neutral-50 min-h-screen flex flex-col antialiased">
     
@@ -142,6 +145,21 @@
                 setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
+    </script>
+
+    <!-- Lenis smooth scrolling. Wheel scroll is smoothed; touch keeps native
+         scrolling, and users with "reduce motion" get normal scrolling. -->
+    <script src="https://unpkg.com/lenis@1.3.28/dist/lenis.min.js"></script>
+    <script>
+        if (window.Lenis) {
+            window.lenis = new Lenis({
+                autoRaf: true,
+                autoToggle: true,          // pause when a page locks scrolling (e.g. full-screen login)
+                anchors: true,             // smooth #anchor links
+                allowNestedScroll: true,   // textareas, dropdowns etc. scroll natively
+                stopInertiaOnNavigate: true
+            });
+        }
     </script>
 </body>
 </html>
