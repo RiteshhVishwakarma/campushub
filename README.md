@@ -1,5 +1,11 @@
 # CampusHub
 
+### 🔗 Live demo: **[campushub-s4fd.onrender.com](https://campushub-s4fd.onrender.com/)**
+
+Try it with the sample login: `seed_user_1` / `seedpass123`
+
+> It runs on Render's free plan, so the first visit after a quiet spell can take about 30–60 seconds to load.
+
 A Django site where students find roommates, flats/PGs, events and internships, and buy or sell things on campus.
 
 ## Features
