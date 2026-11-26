@@ -8,6 +8,8 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+from django.core.files import File
+from django.core.files.storage import FileSystemStorage, default_storage
 from accounts.models import Profile
 from posts.models import Post
 
@@ -28,6 +30,28 @@ def image_topic(filename):
     if '__' not in stem:
         return None
     return re.sub(r'_\d+$', '', stem.split('__', 1)[1]).lower()
+
+
+_uploaded_images = {}
+
+
+def store_seed_image(relative_path):
+    """
+    Return a storage name for a bundled seed image (e.g. 'posts/x.jpg').
+
+    Locally the file already sits in MEDIA_ROOT, so the path is used as is.
+    With remote storage (Cloudinary in production) the file is uploaded once
+    and the name the storage returns is reused for every post.
+    """
+    if isinstance(default_storage, FileSystemStorage):
+        return relative_path
+    if relative_path not in _uploaded_images:
+        source = os.path.join(settings.MEDIA_ROOT, relative_path)
+        with open(source, 'rb') as fh:
+            _uploaded_images[relative_path] = default_storage.save(
+                relative_path, File(fh, name=os.path.basename(relative_path))
+            )
+    return _uploaded_images[relative_path]
 
 
 def pick_image_for_title(title, images):
@@ -285,7 +309,7 @@ class Command(BaseCommand):
                 image_path = None
                 image_name = pick_image_for_title(title, available_images)
                 if image_name:
-                    image_path = 'posts/' + image_name
+                    image_path = store_seed_image('posts/' + image_name)
                 
                 post = Post.objects.create(
                     user=user,
