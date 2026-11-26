@@ -102,10 +102,13 @@ class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         profile, created = Profile.objects.get_or_create(user=request.user)
         active_posts_count = profile.get_active_posts_count()
+        recent_posts = request.user.posts.filter(is_active=True).order_by('-created_at')[:6]
         return render(request, self.template_name, {
             'user': request.user,
             'profile': profile,
-            'active_posts_count': active_posts_count
+            'active_posts_count': active_posts_count,
+            'total_posts_count': request.user.posts.count(),
+            'recent_posts': recent_posts,
         })
 
 

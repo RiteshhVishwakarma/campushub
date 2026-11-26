@@ -1,185 +1,313 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit Profile - CampusHub{% endblock %}
+{% block title %}Edit profile - CampusHub{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-6">
-    <!-- Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
-        <p class="text-gray-600 text-sm mt-1">Update your profile information</p>
+<div class="ep-page">
+
+<!-- ============ HEADER ============ -->
+<section class="ep-bleed ep-head">
+    <div class="ep-head-grid" aria-hidden="true"></div>
+    <div class="ep-wrap ep-head-inner">
+        <nav class="ep-crumbs" aria-label="Breadcrumb">
+            <a href="{% url 'accounts:profile' %}">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Profile
+            </a>
+            <span aria-hidden="true">/</span>
+            <span>Edit</span>
+        </nav>
+        <h1 class="ep-title">Edit profile</h1>
+        <p class="ep-lead">This is what other students see on your posts. Keep it accurate so people can trust and reach you.</p>
     </div>
-    
-    <!-- Edit Form Card -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <form method="post" enctype="multipart/form-data" class="p-6">
-            {% csrf_token %}
-            
-            <!-- Profile Photo Section -->
-            <div class="mb-6 pb-6 border-b border-gray-100">
-                <label class="block text-sm font-semibold text-gray-700 mb-3">Profile Photo</label>
-                
-                <!-- Current Photo Preview -->
-                <div class="flex items-center gap-4 mb-4">
-                    <div id="photo-preview" class="flex-shrink-0">
-                        {% if profile.profile_photo %}
-                            <img src="{{ profile.profile_photo.url }}" 
-                                 alt="Current profile photo" 
-                                 class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
-                        {% else %}
-                            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200">
-                                <span class="text-white text-2xl font-bold">{{ profile.get_initials }}</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-600 mb-2">JPG, PNG or WEBP. Max size 5MB</p>
-                        <label for="{{ form.profile_photo.id_for_label }}" 
-                               class="inline-block bg-gray-100 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
-                            Choose New Photo
-                        </label>
-                        {{ form.profile_photo }}
-                    </div>
-                </div>
-                
-                {% if form.profile_photo.errors %}
-                    <div class="text-red-600 text-sm mt-2">
-                        {{ form.profile_photo.errors.0 }}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <!-- Full Name -->
-            <div class="mb-6">
-                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
-                    Full Name <span class="text-red-500">*</span>
-                </label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    <p class="text-red-600 text-sm mt-2">{{ form.first_name.errors.0 }}</p>
-                {% endif %}
-            </div>
-            
-            <!-- Bio -->
-            <div class="mb-6">
-                <label for="{{ form.bio.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
-                    Bio
-                </label>
-                {{ form.bio }}
-                <p class="text-gray-500 text-xs mt-1">
-                    <span id="bio-count">{{ form.bio.value|length|default:0 }}</span>/120 characters
-                </p>
-                {% if form.bio.errors %}
-                    <p class="text-red-600 text-sm mt-2">{{ form.bio.errors.0 }}</p>
-                {% endif %}
-            </div>
-            
-            <!-- Phone -->
-            <div class="mb-6">
-                <label for="{{ form.phone.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone Number
-                </label>
-                {{ form.phone }}
-                <p class="text-gray-500 text-xs mt-1">Format: +1234567890 or 1234567890</p>
-                {% if form.phone.errors %}
-                    <p class="text-red-600 text-sm mt-2">{{ form.phone.errors.0 }}</p>
-                {% endif %}
-            </div>
-            
-            <!-- Read-Only Fields Section -->
-            <div class="mb-6 pb-6 border-t border-gray-100 pt-6">
-                <h3 class="text-sm font-semibold text-gray-700 mb-4">Account Information (Read Only)</h3>
-                
-                <div class="space-y-4">
-                    <!-- Username -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600 mb-1">Username</label>
-                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
-                            <span class="text-gray-800">{{ user.username }}</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Email -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
-                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
-                            <span class="text-gray-800">{{ user.email }}</span>
-                        </div>
-                    </div>
-                    
-                    <!-- College -->
-                    {% if profile.college %}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600 mb-1">College</label>
-                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
-                            <span class="text-gray-800">{{ profile.college }}</span>
-                        </div>
-                    </div>
+</section>
+
+<form method="post" enctype="multipart/form-data" class="ep-wrap ep-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="ep-alert">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <div>{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+    </div>
+    {% endif %}
+
+    <!-- Photo -->
+    <section class="ep-card">
+        <div class="ep-card-info">
+            <h2>Profile photo</h2>
+            <p>A clear photo of your face helps people recognise you when you meet.</p>
+        </div>
+        <div class="ep-card-fields">
+            <div class="ep-photo {% if form.profile_photo.errors %}has-error{% endif %}">
+                <div class="ep-avatar" id="ep-avatar">
+                    <span>{{ profile.get_initials }}</span>
+                    {% if profile.profile_photo %}
+                    <img src="{{ profile.profile_photo.url }}" alt="Current profile photo" onerror="this.remove()">
                     {% endif %}
                 </div>
-            </div>
-            
-            <!-- Form Errors -->
-            {% if form.non_field_errors %}
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                    {{ form.non_field_errors.0 }}
+                <div class="ep-photo-body">
+                    <div class="ep-photo-actions">
+                        <label for="{{ form.profile_photo.id_for_label }}" class="ep-btn ep-btn--ghost">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            {% if profile.profile_photo %}Change photo{% else %}Upload photo{% endif %}
+                        </label>
+                        <span class="ep-file-name" id="ep-file-name"></span>
+                    </div>
+                    <p class="ep-hint">JPG, PNG or WEBP, up to 5 MB. Square images look best.</p>
+                    {% for error in form.profile_photo.errors %}<p class="ep-error">{{ error }}</p>{% endfor %}
                 </div>
-            {% endif %}
-            
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button type="submit" 
-                        class="flex-1 bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                    Save Changes
-                </button>
-                <a href="{% url 'accounts:profile' %}" 
-                   class="flex-1 bg-gray-100 text-gray-700 text-center font-semibold px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors">
-                    Cancel
-                </a>
+                {{ form.profile_photo }}
             </div>
-        </form>
+        </div>
+    </section>
+
+    <!-- Public profile -->
+    <section class="ep-card">
+        <div class="ep-card-info">
+            <h2>Public profile</h2>
+            <p>Shown next to every post you make.</p>
+        </div>
+        <div class="ep-card-fields">
+            <div class="ep-field {% if form.first_name.errors %}has-error{% endif %}">
+                <label for="{{ form.first_name.id_for_label }}">Full name</label>
+                <div class="ep-control">{{ form.first_name }}</div>
+                {% for error in form.first_name.errors %}<p class="ep-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="ep-field {% if form.bio.errors %}has-error{% endif %}">
+                <div class="ep-label-row">
+                    <label for="{{ form.bio.id_for_label }}">Bio <span class="ep-optional">Optional</span></label>
+                    <span class="ep-count"><span id="ep-bio-count">{{ form.bio.value|default:""|length }}</span>/120</span>
+                </div>
+                <div class="ep-control">{{ form.bio }}</div>
+                {% if form.bio.errors %}
+                    {% for error in form.bio.errors %}<p class="ep-error">{{ error }}</p>{% endfor %}
+                {% else %}
+                <p class="ep-hint">For example: “2nd year CS at PICT, looking for a flatmate near Viman Nagar.”</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="ep-card">
+        <div class="ep-card-info">
+            <h2>Contact</h2>
+            <p>Used for the Call and WhatsApp buttons on your posts.</p>
+        </div>
+        <div class="ep-card-fields">
+            <div class="ep-field {% if form.phone.errors %}has-error{% endif %}">
+                <label for="{{ form.phone.id_for_label }}">Phone number</label>
+                <div class="ep-control ep-control--icon">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    {{ form.phone }}
+                </div>
+                {% if form.phone.errors %}
+                    {% for error in form.phone.errors %}<p class="ep-error">{{ error }}</p>{% endfor %}
+                {% else %}
+                <p class="ep-hint">Include the country code. Only signed-in students can see it.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Account -->
+    <section class="ep-card">
+        <div class="ep-card-info">
+            <h2>Account</h2>
+            <p>These details identify your account and can't be changed here.</p>
+        </div>
+        <div class="ep-card-fields">
+            <dl class="ep-readonly">
+                <div>
+                    <dt>Username</dt>
+                    <dd>@{{ user.username }}</dd>
+                </div>
+                <div>
+                    <dt>Email</dt>
+                    <dd>{{ user.email|default:"Not added" }}</dd>
+                </div>
+                {% if profile.college %}
+                <div>
+                    <dt>College</dt>
+                    <dd>{{ profile.college }}</dd>
+                </div>
+                {% endif %}
+            </dl>
+        </div>
+    </section>
+
+    <!-- Save bar -->
+    <div class="ep-savebar">
+        <p class="ep-savebar-note" id="ep-dirty">You have unsaved changes</p>
+        <div class="ep-savebar-actions">
+            <a href="{% url 'accounts:profile' %}" class="ep-btn ep-btn--ghost">Cancel</a>
+            <button type="submit" class="ep-btn ep-btn--primary">Save changes</button>
+        </div>
     </div>
+</form>
+
 </div>
 
 <style>
-    /* Hide default file input */
-    input[type="file"] {
-        display: none;
-    }
+html:has(.ep-page) { overflow-x: clip; }
+.ep-page {
+    --ink: #0F172A; --ink-2: #334155; --muted: #64748B; --line: #E2E8F0; --soft: #F8FAFC;
+    --brand: #2563EB; --danger: #DC2626;
+    color: var(--ink);
+    margin-top: -1.5rem;
+}
+.ep-bleed { width: 100vw; margin-left: calc(50% - 50vw); }
+.ep-wrap { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
+
+/* Header */
+.ep-head { position: relative; overflow: hidden; background: linear-gradient(180deg, #F5F8FF 0%, #fff 100%); border-bottom: 1px solid var(--line); }
+.ep-head-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgba(15,23,42,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 95%);
+            mask-image: linear-gradient(180deg, #000, transparent 95%);
+}
+.ep-head-inner { position: relative; padding-top: 2rem; padding-bottom: 2rem; }
+.ep-crumbs { display: flex; align-items: center; gap: .5rem; font-size: .8125rem; color: var(--muted); }
+.ep-crumbs a { display: inline-flex; align-items: center; gap: .2rem; color: var(--ink); font-weight: 600; text-decoration: none; }
+.ep-crumbs a:hover { color: var(--brand); }
+.ep-title { margin-top: .75rem; font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 800; letter-spacing: -0.03em; }
+.ep-lead { margin-top: .35rem; font-size: .95rem; color: var(--muted); max-width: 36rem; line-height: 1.55; }
+
+/* Form */
+.ep-form { padding-top: 1.75rem; padding-bottom: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+.ep-card {
+    display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 2rem;
+    padding: 1.5rem; background: #fff; border: 1px solid var(--line); border-radius: 1rem;
+}
+.ep-card-info h2 { font-size: .95rem; font-weight: 700; }
+.ep-card-info p { margin-top: .3rem; font-size: .825rem; line-height: 1.55; color: var(--muted); }
+.ep-card-fields { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+
+.ep-field label, .ep-label-row label { display: block; font-size: .8125rem; font-weight: 600; color: var(--ink-2); margin-bottom: .4rem; }
+.ep-label-row { display: flex; justify-content: space-between; align-items: baseline; }
+.ep-optional { margin-left: .3rem; font-weight: 500; color: #94A3B8; }
+.ep-count { font-size: .75rem; color: #94A3B8; font-variant-numeric: tabular-nums; }
+.ep-count.is-full { color: var(--danger); }
+.ep-page .ep-control input, .ep-page .ep-control textarea {
+    width: 100%; padding: .7rem .9rem; font-size: .95rem; line-height: 1.5; color: var(--ink);
+    background: #fff; border: 1px solid #CBD5E1 !important; border-radius: .7rem !important;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04) !important; outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.ep-page .ep-control input { height: 2.75rem; padding-top: 0; padding-bottom: 0; }
+.ep-page .ep-control textarea { min-height: 6rem; resize: vertical; }
+.ep-page .ep-control input:hover, .ep-page .ep-control textarea:hover { border-color: #94A3B8 !important; }
+.ep-page .ep-control input:focus, .ep-page .ep-control textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 4px rgba(37,99,235,.14) !important; }
+.ep-page .ep-field.has-error input, .ep-page .ep-field.has-error textarea { border-color: var(--danger) !important; }
+.ep-control--icon { position: relative; }
+.ep-control--icon svg { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; }
+.ep-page .ep-control--icon input { padding-left: 2.5rem; }
+.ep-hint { margin-top: .4rem; font-size: .78rem; color: var(--muted); line-height: 1.45; }
+.ep-error { margin-top: .4rem; font-size: .8rem; color: var(--danger); }
+.ep-alert { display: flex; gap: .6rem; padding: .8rem .9rem; border-radius: .75rem; font-size: .875rem; color: #991B1B; background: #FEF2F2; border: 1px solid #FECACA; }
+
+/* Photo */
+.ep-photo { display: flex; align-items: center; gap: 1.25rem; }
+.ep-photo input[type="file"] { display: none; }
+.ep-avatar {
+    position: relative; flex: none; width: 5rem; height: 5rem; border-radius: 50%; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.75rem; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #2563EB, #4F46E5);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 5px var(--line);
+}
+.ep-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ep-photo-actions { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+.ep-file-name { font-size: .8rem; color: var(--ink-2); max-width: 14rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Read-only */
+.ep-readonly { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: .75rem; overflow: hidden; }
+.ep-readonly > div { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; background: var(--soft); }
+.ep-readonly > div + div { border-top: 1px solid var(--line); }
+.ep-readonly dt { font-size: .825rem; color: var(--muted); }
+.ep-readonly dd { font-size: .875rem; font-weight: 600; color: var(--ink); text-align: right; overflow-wrap: anywhere; }
+
+/* Buttons */
+.ep-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+    height: 2.6rem; padding: 0 1.1rem; border-radius: .7rem; border: 1px solid transparent;
+    font-size: .875rem; font-weight: 600; text-decoration: none; white-space: nowrap; cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, filter .15s ease;
+}
+.ep-btn--primary { color: #fff; background: linear-gradient(180deg, #3B82F6, var(--brand)); box-shadow: 0 8px 20px -10px rgba(37,99,235,.6); }
+.ep-btn--primary:hover { filter: brightness(.96); }
+.ep-btn--ghost { color: var(--ink); background: #fff; border-color: var(--line); }
+.ep-btn--ghost:hover { border-color: #CBD5E1; background: var(--soft); }
+.ep-btn:focus-visible { outline: 3px solid rgba(37,99,235,.4); outline-offset: 2px; }
+
+/* Save bar */
+.ep-savebar {
+    position: sticky; bottom: 1rem; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    margin-top: .5rem; padding: .75rem .75rem .75rem 1.25rem;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--line); border-radius: 1rem;
+    box-shadow: 0 12px 32px -16px rgba(15,23,42,.3);
+}
+.ep-savebar-note { font-size: .85rem; color: #B45309; font-weight: 500; visibility: hidden; display: flex; align-items: center; gap: .45rem; }
+.ep-savebar-note::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; }
+.ep-savebar.is-dirty .ep-savebar-note { visibility: visible; }
+.ep-savebar-actions { display: flex; gap: .5rem; margin-left: auto; }
+
+@media (max-width: 768px) {
+    .ep-card { grid-template-columns: 1fr; gap: 1rem; padding: 1.25rem; }
+    .ep-savebar { bottom: 5.5rem; }
+    .ep-savebar-note { display: none; }
+    .ep-savebar-actions { width: 100%; }
+    .ep-savebar-actions .ep-btn { flex: 1; }
+}
 </style>
 
 <script>
-    // Bio character counter
-    document.addEventListener('DOMContentLoaded', function() {
-        const bioTextarea = document.getElementById('{{ form.bio.id_for_label }}');
-        const bioCount = document.getElementById('bio-count');
-        
-        if (bioTextarea) {
-            bioTextarea.addEventListener('input', function() {
-                bioCount.textContent = this.value.length;
-            });
-        }
-        
-        // Photo preview
-        const photoInput = document.getElementById('{{ form.profile_photo.id_for_label }}');
-        const photoPreview = document.getElementById('photo-preview');
-        
-        if (photoInput) {
-            photoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        photoPreview.innerHTML = `
-                            <img src="${e.target.result}" 
-                                 alt="New profile photo" 
-                                 class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('.ep-form');
+    var bar = document.querySelector('.ep-savebar');
+    var markDirty = function () { bar.classList.add('is-dirty'); };
+    form.addEventListener('input', markDirty);
+    form.addEventListener('change', markDirty);
+
+    // Bio counter
+    var bio = document.getElementById('{{ form.bio.id_for_label }}');
+    var count = document.getElementById('ep-bio-count');
+    if (bio && count) {
+        var update = function () {
+            count.textContent = bio.value.length;
+            count.parentElement.classList.toggle('is-full', bio.value.length >= 120);
+        };
+        bio.addEventListener('input', update);
+        update();
+    }
+
+    // Photo preview
+    var input = document.getElementById('{{ form.profile_photo.id_for_label }}');
+    var avatar = document.getElementById('ep-avatar');
+    var fileName = document.getElementById('ep-file-name');
+    if (input) {
+        input.addEventListener('change', function () {
+            var file = input.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            fileName.textContent = file.name;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = avatar.querySelector('img') || document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'New profile photo';
+                avatar.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+});
 </script>
 {% endblock %}

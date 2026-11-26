@@ -4,215 +4,368 @@
 {% block title %}Browse Posts - CampusHub{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Browse Posts</h1>
-    
-    <!-- Search and Filters -->
-    <form method="get" class="bg-white rounded-xl shadow-md p-6 mb-6">
-        <div class="space-y-4">
-            
-            <!-- Search Bar -->
+<div class="bp-page">
+
+<!-- ============ HEADER + SEARCH ============ -->
+<section class="bp-bleed bp-head">
+    <div class="bp-head-grid" aria-hidden="true"></div>
+    <div class="bp-wrap">
+        <div class="bp-head-row">
             <div>
-                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <div class="flex gap-2">
-                    <input 
-                        type="text" 
-                        name="q" 
-                        id="search"
-                        value="{{ search_query }}"
-                        placeholder="Search by title, description, or location..." 
-                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                    >
-                    <button type="submit" class="px-6 py-3 bg-white border border-gray-300 text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                        Search
-                    </button>
-                </div>
+                <nav class="bp-crumbs" aria-label="Breadcrumb">
+                    <a href="{% url 'core:home' %}">Home</a>
+                    <span aria-hidden="true">/</span>
+                    <span>Browse</span>
+                </nav>
+                <h1 class="bp-title">
+                    {% if selected_category == 'ROOMMATE' %}Roommates
+                    {% elif selected_category == 'FLAT_PG' %}Flats &amp; PGs
+                    {% elif selected_category == 'EVENT' %}Campus events
+                    {% elif selected_category == 'INTERNSHIP' %}Internships
+                    {% elif selected_category == 'BUY_SELL' %}Buy &amp; sell
+                    {% else %}All posts{% endif %}
+                </h1>
+                <p class="bp-count">
+                    <strong>{{ page_obj.paginator.count }}</strong> {{ page_obj.paginator.count|pluralize:"listing,listings" }}
+                    {% if selected_location %}around <strong>{{ selected_location }}</strong>{% else %}across campus{% endif %}
+                </p>
             </div>
-            
-            <!-- Category Chips -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <div class="flex flex-wrap gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="" {% if not selected_category %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">All</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="ROOMMATE" {% if selected_category == 'ROOMMATE' %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">Roommate</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="FLAT_PG" {% if selected_category == 'FLAT_PG' %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">Flat / PG</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="EVENT" {% if selected_category == 'EVENT' %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">Events</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="INTERNSHIP" {% if selected_category == 'INTERNSHIP' %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">Internship</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="radio" name="category" value="BUY_SELL" {% if selected_category == 'BUY_SELL' %}checked{% endif %} class="mr-2">
-                        <span class="px-4 py-2 bg-gray-100 rounded-lg cursor-pointer">Buy & Sell</span>
-                    </label>
-                </div>
-            </div>
-            
-            <!-- Location Filter -->
-            <div>
-                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                <input 
-                    type="text" 
-                    name="location" 
-                    id="location"
-                    value="{{ selected_location }}"
-                    placeholder="Filter by location..." 
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                >
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex gap-3">
-                <button type="submit" class="flex-1 bg-neutral-900 text-white font-medium py-3 rounded-lg hover:bg-neutral-800 transition-colors">
-                    Apply Filters
-                </button>
-                {% if has_filters %}
-                <a href="{% url 'posts:post_list' %}" class="flex-1 bg-white border border-neutral-300 text-neutral-900 text-center font-medium py-3 rounded-lg hover:bg-neutral-50 transition-colors">
-                    Clear
-                </a>
-                {% endif %}
-            </div>
+            {% if user.is_authenticated %}
+            <a href="{% url 'posts:post_create' %}" class="bp-btn bp-btn--dark">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                New post
+            </a>
+            {% endif %}
         </div>
-    </form>
-    
-    <!-- Posts Grid -->
+
+        <!-- Search -->
+        <form method="get" class="bp-search" role="search">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            <label class="bp-field">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="bp-sr">Search</span>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search rooms, laptops, internships…" autocomplete="off">
+            </label>
+            <span class="bp-divider" aria-hidden="true"></span>
+            <label class="bp-field bp-field--loc">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="bp-sr">Location</span>
+                <input type="text" name="location" value="{{ selected_location }}" placeholder="Area, e.g. Viman Nagar" autocomplete="off">
+            </label>
+            <button type="submit" class="bp-btn bp-btn--primary bp-search-btn">Search</button>
+        </form>
+    </div>
+</section>
+
+<!-- ============ CATEGORY TABS ============ -->
+<div class="bp-bleed bp-tabs-bar">
+    <div class="bp-wrap">
+        <nav class="bp-tabs" aria-label="Categories">
+            <a href="?{% if search_query %}q={{ search_query|urlencode }}&{% endif %}{% if selected_location %}location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if not selected_category %}is-active{% endif %}">All</a>
+            <a href="?category=ROOMMATE{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_location %}&location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if selected_category == 'ROOMMATE' %}is-active{% endif %}">
+                <i style="--c:#7C3AED"></i>Roommate</a>
+            <a href="?category=FLAT_PG{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_location %}&location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if selected_category == 'FLAT_PG' %}is-active{% endif %}">
+                <i style="--c:#2563EB"></i>Flat / PG</a>
+            <a href="?category=EVENT{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_location %}&location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if selected_category == 'EVENT' %}is-active{% endif %}">
+                <i style="--c:#059669"></i>Events</a>
+            <a href="?category=INTERNSHIP{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_location %}&location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if selected_category == 'INTERNSHIP' %}is-active{% endif %}">
+                <i style="--c:#D97706"></i>Internship</a>
+            <a href="?category=BUY_SELL{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if selected_location %}&location={{ selected_location|urlencode }}{% endif %}" class="bp-tab {% if selected_category == 'BUY_SELL' %}is-active{% endif %}">
+                <i style="--c:#DC2626"></i>Buy &amp; Sell</a>
+        </nav>
+    </div>
+</div>
+
+<div class="bp-wrap bp-body">
+
+    <!-- Active filters -->
+    {% if search_query or selected_location %}
+    <div class="bp-active">
+        <span class="bp-active-label">Filtered by</span>
+        {% if search_query %}
+        <a class="bp-pill" href="?{% if selected_category %}category={{ selected_category }}&{% endif %}{% if selected_location %}location={{ selected_location|urlencode }}{% endif %}" title="Remove search">
+            “{{ search_query }}”
+            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+        {% endif %}
+        {% if selected_location %}
+        <a class="bp-pill" href="?{% if selected_category %}category={{ selected_category }}&{% endif %}{% if search_query %}q={{ search_query|urlencode }}{% endif %}" title="Remove location">
+            {{ selected_location }}
+            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+        {% endif %}
+        <a class="bp-clear" href="{% url 'posts:post_list' %}">Clear all</a>
+    </div>
+    {% endif %}
+
     {% if posts %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bp-grid">
         {% for post in posts %}
-        <a href="{% url 'posts:post_detail' post.pk %}" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition block">
-            <!-- Image -->
-                <div class="h-48 bg-gray-200 overflow-hidden">
+        <a href="{% url 'posts:post_detail' post.pk %}" class="bp-card">
+            <div class="bp-media">
+                <div class="bp-ph"><span>{{ post.title|first|upper }}</span></div>
                 {% if post.image %}
-                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center bg-neutral-200">
-                    <span class="text-neutral-400 text-3xl font-semibold">{{ post.title|first|upper }}</span>
-                </div>
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy" onerror="this.remove()">
+                {% endif %}
+                <span class="bp-cat bp-cat--{{ post.category|lower }}">{{ post.get_category_display }}</span>
+                {% if post.days_until_expiry <= 3 %}
+                <span class="bp-flag">Ending soon</span>
                 {% endif %}
             </div>
-            
-            <!-- Content -->
-            <div class="p-4">
-                <!-- Category Badge -->
-                <div class="mb-2">
-                    <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                        {{ post.get_category_display }}
-                    </span>
-                </div>
-                
-                <!-- Title -->
-                <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{{ post.title }}</h3>
-                
-                <!-- Location -->
-                <div class="flex items-center text-gray-600 text-sm mb-2">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span class="line-clamp-1">{{ post.location }}</span>
-                </div>
-                
-                <!-- Price & Time -->
-                <div class="flex justify-between items-center">
+
+            <div class="bp-card-body">
+                <div class="bp-card-top">
                     {% if post.price %}
-                    <span class="text-primary font-bold text-lg">₹{{ post.price }}</span>
+                    <span class="bp-price">₹{{ post.price|floatformat:"0g" }}{% if post.category == 'FLAT_PG' or post.category == 'ROOMMATE' or post.category == 'INTERNSHIP' %}<small>/mo</small>{% endif %}</span>
                     {% else %}
-                    <span class="text-gray-400 text-sm">No price</span>
+                    <span class="bp-price bp-price--none">{% if post.category == 'EVENT' %}Open entry{% elif post.category == 'INTERNSHIP' %}Apply now{% else %}Contact for price{% endif %}</span>
                     {% endif %}
-                    <span class="text-gray-500 text-xs">{{ post.created_at|timesince_short }}</span>
+                    <span class="bp-time">{{ post.created_at|timesince_short }}</span>
                 </div>
-                
-                <!-- Expiry Badge -->
-                <div class="mt-2">
-                    <span class="inline-block text-xs px-2 py-1 rounded {% if post.days_until_expiry <= 3 %}bg-red-100 text-red-700{% elif post.days_until_expiry <= 7 %}bg-orange-100 text-orange-700{% else %}bg-gray-100 text-gray-600{% endif %}">
-                        {{ post.get_expiry_display }}
+
+                <h2 class="bp-card-title">{{ post.title }}</h2>
+
+                <div class="bp-card-meta">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span>{{ post.location }}</span>
+                </div>
+
+                <div class="bp-card-foot">
+                    <span class="bp-author">
+                        <span class="bp-avatar">{{ post.user.first_name|default:post.user.username|first|upper }}</span>
+                        <span class="bp-author-name">{{ post.user.get_full_name|default:post.user.username }}</span>
                     </span>
+                    <span class="bp-expiry {% if post.days_until_expiry <= 3 %}is-urgent{% elif post.days_until_expiry <= 7 %}is-soon{% endif %}">{{ post.get_expiry_display }}</span>
                 </div>
             </div>
         </a>
         {% endfor %}
     </div>
-    
-    <!-- Pagination -->
-    {% include 'components/pagination.html' with page_obj=page_obj %}
-    
+
+    <div class="bp-pager">
+        {% include 'components/pagination.html' with page_obj=page_obj %}
+    </div>
+
     {% else %}
-    <div class="text-center py-16">
-        <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
+    <div class="bp-empty">
+        <div class="bp-empty-icon">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
         {% if has_filters %}
-        <h2 class="text-2xl font-semibold text-gray-700 mb-2">No Matching Posts Found</h2>
-        <p class="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
-        <a href="{% url 'posts:post_list' %}" class="inline-block bg-primary text-white font-semibold px-8 py-4 rounded-lg hover:bg-secondary transition">
-            Clear Filters
-        </a>
+        <h2>No matching posts</h2>
+        <p>Nothing matches these filters right now. Try a broader search or a different area.</p>
+        <a href="{% url 'posts:post_list' %}" class="bp-btn bp-btn--ghost">Clear filters</a>
         {% else %}
-        <h2 class="text-2xl font-semibold text-gray-700 mb-2">No Posts Yet</h2>
-        <p class="text-gray-500 mb-6">Be the first student to create a post.</p>
+        <h2>No posts yet</h2>
+        <p>Be the first student to create a post.</p>
         {% if user.is_authenticated %}
-        <a href="{% url 'posts:post_create' %}" class="inline-block bg-primary text-white font-semibold px-8 py-4 rounded-lg hover:bg-secondary transition">
-            Create First Post
-        </a>
+        <a href="{% url 'posts:post_create' %}" class="bp-btn bp-btn--primary">Create first post</a>
         {% else %}
-        <a href="{% url 'accounts:login' %}" class="inline-block bg-primary text-white font-semibold px-8 py-4 rounded-lg hover:bg-secondary transition">
-            Login to Create Post
-        </a>
+        <a href="{% url 'accounts:login' %}" class="bp-btn bp-btn--primary">Log in to create a post</a>
         {% endif %}
         {% endif %}
     </div>
     {% endif %}
 </div>
 
+</div>
+
 <style>
-.line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+html:has(.bp-page) { overflow-x: clip; }
+.bp-page {
+    --ink: #0F172A; --ink-2: #334155; --muted: #64748B; --line: #E2E8F0; --soft: #F8FAFC;
+    --brand: #2563EB;
+    color: var(--ink);
+    margin-top: -1.5rem;
 }
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.bp-bleed { width: 100vw; margin-left: calc(50% - 50vw); }
+.bp-wrap { max-width: 76rem; margin: 0 auto; padding: 0 1.25rem; }
+.bp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* Header */
+.bp-head {
+    position: relative; overflow: hidden;
+    background: linear-gradient(180deg, #F5F8FF 0%, #fff 100%);
+    padding: 2.5rem 0 2rem;
+}
+.bp-head-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgba(15,23,42,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 95%);
+            mask-image: linear-gradient(180deg, #000, transparent 95%);
+}
+.bp-head .bp-wrap { position: relative; }
+.bp-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.bp-crumbs { display: flex; gap: .5rem; font-size: .8125rem; color: var(--muted); margin-bottom: .5rem; }
+.bp-crumbs a { color: var(--muted); text-decoration: none; }
+.bp-crumbs a:hover { color: var(--ink); }
+.bp-title { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.bp-count { margin-top: .4rem; font-size: .9375rem; color: var(--muted); }
+.bp-count strong { color: var(--ink); font-weight: 600; }
+
+/* Buttons */
+.bp-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+    height: 2.75rem; padding: 0 1.15rem; border-radius: .75rem;
+    font-size: .9rem; font-weight: 600; text-decoration: none; white-space: nowrap;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.bp-btn--primary { background: var(--brand); color: #fff; }
+.bp-btn--primary:hover { background: #1D4ED8; }
+.bp-btn--dark { background: var(--ink); color: #fff; }
+.bp-btn--dark:hover { background: #1E293B; }
+.bp-btn--ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+.bp-btn--ghost:hover { border-color: #CBD5E1; }
+
+/* Search */
+.bp-search {
+    display: flex; align-items: center; gap: .25rem;
+    margin-top: 1.5rem; padding: .375rem;
+    background: #fff; border: 1px solid var(--line); border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.12);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.bp-search:focus-within { border-color: #93C5FD; box-shadow: 0 0 0 4px rgba(37,99,235,.12), 0 8px 24px -12px rgba(15,23,42,.12); }
+.bp-field { position: relative; flex: 1.4; display: flex; align-items: center; gap: .6rem; padding: 0 .85rem; color: #94A3B8; min-width: 0; }
+.bp-field--loc { flex: 1; }
+.bp-search .bp-field input {
+    flex: 1; min-width: 0; height: 2.75rem; padding: 0; margin: 0;
+    border: 0 !important; outline: 0 !important; box-shadow: none !important; background: transparent !important;
+    border-radius: 0; font-size: .95rem; color: var(--ink);
+}
+.bp-field input::placeholder { color: #94A3B8; }
+.bp-divider { width: 1px; height: 1.75rem; background: var(--line); }
+.bp-search-btn { padding: 0 1.5rem; }
+
+/* Tabs */
+.bp-tabs-bar {
+    position: sticky; top: 4rem; z-index: 30;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid #EEF2F7; border-bottom: 1px solid var(--line);
+}
+.bp-tabs { display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: none; }
+.bp-tabs::-webkit-scrollbar { display: none; }
+.bp-tab {
+    position: relative; display: inline-flex; align-items: center; gap: .5rem;
+    padding: 1rem .9rem; font-size: .9rem; font-weight: 500; color: var(--muted);
+    text-decoration: none; white-space: nowrap;
+    transition: color .15s ease;
+}
+.bp-tab i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); opacity: .85; }
+.bp-tab:hover { color: var(--ink); }
+.bp-tab.is-active { color: var(--ink); font-weight: 600; }
+.bp-tab.is-active::after {
+    content: ""; position: absolute; left: .9rem; right: .9rem; bottom: -1px; height: 2px;
+    background: var(--ink); border-radius: 2px;
 }
 
-/* Hide radio buttons but keep functionality */
-input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+/* Body */
+.bp-body { padding-top: 1.75rem; padding-bottom: 2rem; }
+.bp-active { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: 1.5rem; }
+.bp-active-label { font-size: .8125rem; color: var(--muted); margin-right: .25rem; }
+.bp-pill {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .35rem .7rem; font-size: .8125rem; font-weight: 500; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 999px; text-decoration: none;
+}
+.bp-pill:hover { border-color: #CBD5E1; background: var(--soft); }
+.bp-pill svg { color: var(--muted); }
+.bp-clear { font-size: .8125rem; font-weight: 600; color: var(--brand); text-decoration: none; margin-left: .25rem; }
+.bp-clear:hover { text-decoration: underline; }
+
+/* Grid + cards */
+.bp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 1.25rem; }
+.bp-card {
+    display: flex; flex-direction: column;
+    background: #fff; border: 1px solid var(--line); border-radius: 1rem;
+    overflow: hidden; text-decoration: none; color: inherit;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.bp-card:hover { border-color: #CBD5E1; box-shadow: 0 12px 32px -16px rgba(15,23,42,.28); }
+.bp-card:focus-visible { outline: 3px solid rgba(37,99,235,.4); outline-offset: 2px; }
+.bp-media { position: relative; aspect-ratio: 4 / 3; background: #F1F5F9; overflow: hidden; }
+.bp-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.bp-card:hover .bp-media img { transform: scale(1.03); }
+.bp-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #EEF2FF, #E0F2FE); }
+.bp-ph span { font-size: 2.5rem; font-weight: 800; color: #A5B4FC; }
+.bp-cat {
+    position: absolute; top: .75rem; left: .75rem;
+    padding: .25rem .6rem; border-radius: .5rem;
+    font-size: .72rem; font-weight: 600; background: rgba(255,255,255,.95); color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    display: inline-flex; align-items: center; gap: .35rem;
+}
+.bp-cat::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #2563EB; }
+.bp-cat--roommate::before { background: #7C3AED; }
+.bp-cat--event::before { background: #059669; }
+.bp-cat--internship::before { background: #D97706; }
+.bp-cat--buy_sell::before { background: #DC2626; }
+.bp-flag {
+    position: absolute; top: .75rem; right: .75rem;
+    padding: .25rem .55rem; border-radius: .5rem;
+    font-size: .7rem; font-weight: 600; color: #fff; background: rgba(185,28,28,.92);
 }
 
-/* Style labels to look like buttons */
-input[type="radio"] + span {
-    transition: all 0.2s;
+.bp-card-body { display: flex; flex-direction: column; flex: 1; padding: 1rem 1.1rem 1.05rem; }
+.bp-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.bp-price { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.bp-price small { font-size: .8rem; font-weight: 500; color: var(--muted); margin-left: 1px; }
+.bp-price--none { font-size: .875rem; font-weight: 600; color: var(--ink-2); }
+.bp-time { font-size: .75rem; color: #94A3B8; flex: none; }
+.bp-card-title {
+    margin-top: .35rem; font-size: .95rem; font-weight: 500; color: var(--ink-2); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-
-input[type="radio"]:checked + span {
-    background-color: #3B82F6;
-    color: white;
+.bp-card-meta { display: flex; align-items: center; gap: .35rem; margin-top: .4rem; font-size: .8125rem; color: var(--muted); }
+.bp-card-meta svg { flex: none; }
+.bp-card-meta span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bp-card-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    margin-top: auto; padding-top: .85rem; border-top: 1px solid #F1F5F9;
 }
-
-input[type="radio"] + span:hover {
-    background-color: #E5E7EB;
+.bp-card-meta { margin-bottom: .85rem; }
+.bp-author { display: inline-flex; align-items: center; gap: .5rem; min-width: 0; }
+.bp-avatar {
+    flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .68rem; font-weight: 700; color: #3730A3; background: #E0E7FF;
 }
+.bp-author-name { font-size: .8rem; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bp-expiry { flex: none; font-size: .72rem; font-weight: 500; color: var(--muted); }
+.bp-expiry.is-soon { color: #B45309; }
+.bp-expiry.is-urgent { color: #B91C1C; font-weight: 600; }
 
-input[type="radio"]:checked + span:hover {
-    background-color: #2563EB;
+.bp-pager { margin-top: 1rem; }
+
+/* Empty */
+.bp-empty { text-align: center; padding: 4.5rem 1rem; max-width: 26rem; margin: 0 auto; }
+.bp-empty-icon {
+    width: 3.75rem; height: 3.75rem; margin: 0 auto 1.25rem; border-radius: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; border: 1px solid var(--line); color: var(--muted);
+}
+.bp-empty h2 { font-size: 1.25rem; font-weight: 700; }
+.bp-empty p { margin: .5rem 0 1.5rem; color: var(--muted); line-height: 1.6; }
+
+/* Responsive */
+@media (max-width: 1024px) { .bp-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+    .bp-head { padding: 1.75rem 0 1.5rem; }
+    .bp-head-row { align-items: flex-start; }
+    .bp-head-row .bp-btn { height: 2.5rem; padding: 0 .9rem; }
+    .bp-search { flex-wrap: wrap; padding: .5rem; }
+    .bp-field { flex: 1 1 100%; padding: 0 .5rem; }
+    .bp-divider { width: 100%; height: 1px; }
+    .bp-search-btn { flex: 1 1 100%; margin-top: .25rem; }
+    .bp-grid { grid-template-columns: 1fr; }
+    .bp-tabs-bar { top: 4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .bp-page * { transition: none !important; }
 }
 </style>
 {% endblock %}

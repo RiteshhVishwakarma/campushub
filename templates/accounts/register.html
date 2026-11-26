@@ -1,118 +1,115 @@
 {% extends 'base.html' %}
 
-{% block title %}Register - CampusHub{% endblock %}
+{% block title %}Create account - CampusHub{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto">
-    <div class="bg-white rounded-2xl shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Join CampusHub</h1>
-        
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            
-            <!-- Pass next parameter if exists -->
-            {% if request.GET.next %}
-            <input type="hidden" name="next" value="{{ request.GET.next }}">
-            {% endif %}
-            
-            <div>
-                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    Name
-                </label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    {% for error in form.first_name.errors %}
-                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-                    {% endfor %}
-                {% endif %}
+<div class="au-page">
+    <div class="au-shell">
+        <div class="au-main">
+            <div class="au-topbar">
+                <a href="{% url 'core:home' %}" class="au-home">
+                    <span class="au-home-logo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                    CampusHub
+                </a>
+                <p class="au-top-link"><span>Have an account?</span><a href="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Log in</a></p>
             </div>
-            
-            <div>
-                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    Username
-                </label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    {% for error in form.username.errors %}
-                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-                    {% endfor %}
-                {% endif %}
+
+            <div class="au-center">
+            <div class="au-form-wrap">
+                {% include 'accounts/_auth_messages.html' %}
+                <h1 class="au-title">Create your account</h1>
+                <p class="au-lead">Free for students. Takes less than a minute.</p>
+
+                <form method="post" class="au-form" novalidate>
+                    {% csrf_token %}
+                    {% if request.GET.next %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endif %}
+
+                    {% if form.non_field_errors %}
+                    <div class="au-alert" aria-live="assertive">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                        <div>{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="au-row">
+                        <div class="au-field {% if form.first_name.errors %}has-error{% endif %}">
+                            <label for="{{ form.first_name.id_for_label }}">Name</label>
+                            <div class="au-control">{{ form.first_name }}</div>
+                            {% for error in form.first_name.errors %}
+                            <p class="au-error"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div class="au-field {% if form.username.errors %}has-error{% endif %}">
+                            <label for="{{ form.username.id_for_label }}">Username</label>
+                            <div class="au-control">{{ form.username }}</div>
+                            {% for error in form.username.errors %}
+                            <p class="au-error"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="au-field {% if form.email.errors %}has-error{% endif %}">
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        <div class="au-control">{{ form.email }}</div>
+                        {% for error in form.email.errors %}
+                        <p class="au-error"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="au-field {% if form.password1.errors %}has-error{% endif %}">
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                        <div class="au-control au-control--pw">
+                            {{ form.password1 }}
+                            <button type="button" class="au-eye" aria-label="Show password" aria-pressed="false">
+                                <svg class="au-eye-on" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="au-eye-off" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                            </button>
+                        </div>
+                        {% if form.password1.errors %}
+                            {% for error in form.password1.errors %}
+                            <p class="au-error"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>{{ error }}</p>
+                            {% endfor %}
+                        {% else %}
+                        <p class="au-hint">At least 8 characters. Avoid common words or only numbers.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="au-field {% if form.password2.errors %}has-error{% endif %}">
+                        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+                        <div class="au-control au-control--pw">
+                            {{ form.password2 }}
+                            <button type="button" class="au-eye" aria-label="Show password" aria-pressed="false">
+                                <svg class="au-eye-on" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="au-eye-off" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                            </button>
+                        </div>
+                        {% for error in form.password2.errors %}
+                        <p class="au-error"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="au-submit">Create account</button>
+                </form>
+
+                <p class="au-switch">
+                    Already have an account?
+                    <a href="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Log in</a>
+                </p>
             </div>
-            
-            <div>
-                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                </label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    {% for error in form.email.errors %}
-                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-                    {% endfor %}
-                {% endif %}
             </div>
-            
-            <div>
-                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    Password
-                </label>
-                {{ form.password1 }}
-                {% if form.password1.errors %}
-                    {% for error in form.password1.errors %}
-                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-                    {% endfor %}
-                {% endif %}
+
+            <div class="au-foot">
+                <span>© {% now "Y" %} CampusHub</span>
+                <span><a href="{% url 'core:about' %}">About</a> · <a href="{% url 'posts:post_list' %}">Browse posts</a></span>
             </div>
-            
-            <div>
-                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm Password
-                </label>
-                {{ form.password2 }}
-                {% if form.password2.errors %}
-                    {% for error in form.password2.errors %}
-                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            
-            {% if form.non_field_errors %}
-            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-            
-            <button type="submit" class="w-full bg-neutral-900 text-white font-medium py-3 rounded-lg hover:bg-neutral-800 transition-colors">
-                Create Account
-            </button>
-        </form>
-        
-        <p class="text-center text-gray-600 mt-6">
-            Already have an account? 
-            <a href="{% url 'accounts:login' %}" class="text-primary font-semibold hover:text-secondary">
-                Sign in here
-            </a>
-        </p>
+        </div>
+
+        {% include 'accounts/_auth_aside.html' with heading="Join the students already sorting campus life here." %}
     </div>
 </div>
 
-<style>
-    input[type="text"], input[type="password"], input[type="email"] {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-    }
-    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
-        outline: none;
-        border-color: #3B82F6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-</style>
+{% include 'accounts/_auth_styles.html' %}
 {% endblock %}

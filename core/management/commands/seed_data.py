@@ -3,12 +3,43 @@ Management command to generate realistic development seed data for CampusHub.
 """
 import random
 import os
+import re
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from accounts.models import Profile
 from posts.models import Post
+
+
+# Extra title words that point to an image topic (topic -> words)
+TOPIC_ALIASES = {
+    'console': {'console', 'gaming'},
+    'sports': {'sports', 'tournament'},
+    'analytics': {'analytics', 'data'},
+    'content': {'content', 'writing'},
+    'flat': {'flat', '1bhk', '2bhk'},
+}
+
+
+def image_topic(filename):
+    """'event__sports_2.jpg' -> 'sports'; files without '__' have no topic."""
+    stem = os.path.splitext(filename)[0]
+    if '__' not in stem:
+        return None
+    return re.sub(r'_\d+$', '', stem.split('__', 1)[1]).lower()
+
+
+def pick_image_for_title(title, images):
+    """Pick an image whose topic matches a word in the title, else any image."""
+    if not images:
+        return None
+    words = set(re.findall(r'[a-z0-9]+', title.lower()))
+    matched = [
+        f for f in images
+        if (topic := image_topic(f)) and words & TOPIC_ALIASES.get(topic, {topic})
+    ]
+    return random.choice(matched or images)
 
 
 class Command(BaseCommand):
@@ -249,10 +280,12 @@ class Command(BaseCommand):
                 days_ago = random.randint(0, 20)
                 created_at = timezone.now() - timezone.timedelta(days=days_ago)
                 
-                # Pick a random image if available for this category
+                # Pick an image for this category, preferring one whose topic
+                # (e.g. "buy_sell__laptop_1.jpg" -> "laptop") matches the title
                 image_path = None
-                if available_images:
-                    image_path = 'posts/' + random.choice(available_images)
+                image_name = pick_image_for_title(title, available_images)
+                if image_name:
+                    image_path = 'posts/' + image_name
                 
                 post = Post.objects.create(
                     user=user,

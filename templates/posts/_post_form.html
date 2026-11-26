@@ -1,0 +1,530 @@
+{% comment %}
+Shared create/edit post form. Include with mode="create" or mode="edit" (edit needs `post`).
+{% endcomment %}
+<div class="cp-page">
+
+<!-- ============ HEADER ============ -->
+<section class="cp-bleed cp-head">
+    <div class="cp-head-grid" aria-hidden="true"></div>
+    <div class="cp-wrap cp-head-inner">
+        <nav class="cp-crumbs" aria-label="Breadcrumb">
+            {% if mode == 'edit' %}
+            <a href="{% url 'posts:post_detail' post.pk %}">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Back to post
+            </a>
+            <span aria-hidden="true">/</span>
+            <span>Edit</span>
+            {% else %}
+            <a href="{% url 'posts:post_list' %}">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Browse
+            </a>
+            <span aria-hidden="true">/</span>
+            <span>New post</span>
+            {% endif %}
+        </nav>
+        {% if mode == 'edit' %}
+        <h1 class="cp-title">Edit post</h1>
+        <p class="cp-lead">Changes go live as soon as you save. <span class="cp-lead-exp {% if post.days_until_expiry <= 3 %}is-urgent{% endif %}">{{ post.get_expiry_display }}.</span></p>
+        {% else %}
+        <h1 class="cp-title">Create a post</h1>
+        <p class="cp-lead">Takes about a minute. Your post stays live for 30 days.</p>
+        {% endif %}
+    </div>
+</section>
+
+<form method="post" enctype="multipart/form-data" class="cp-wrap cp-layout" id="cp-form" novalidate>
+    {% csrf_token %}
+
+    <div class="cp-main">
+        {% if form.non_field_errors %}
+        <div class="cp-alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+        {% endif %}
+
+        <!-- 1. Category -->
+        <section class="cp-card">
+            <header class="cp-card-head">
+                <span class="cp-step">1</span>
+                <div>
+                    <h2>What are you posting?</h2>
+                    <p>Pick the category that fits best.</p>
+                </div>
+            </header>
+            <div class="cp-cats {% if form.category.errors %}has-error{% endif %}" role="radiogroup" aria-label="Category">
+                {% for value, label in form.category.field.choices %}{% if value %}
+                <label class="cp-cat cp-cat--{{ value|lower }}">
+                    <input type="radio" name="{{ form.category.html_name }}" value="{{ value }}" {% if form.category.value == value %}checked{% endif %} required>
+                    <span class="cp-cat-icon">
+                        {% if value == 'ROOMMATE' %}<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        {% elif value == 'FLAT_PG' %}<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        {% elif value == 'EVENT' %}<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        {% elif value == 'INTERNSHIP' %}<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        {% else %}<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>{% endif %}
+                    </span>
+                    <span class="cp-cat-label">{{ label }}</span>
+                    <span class="cp-cat-check" aria-hidden="true"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                </label>
+                {% endif %}{% endfor %}
+            </div>
+            {% for error in form.category.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+        </section>
+
+        <!-- 2. Details -->
+        <section class="cp-card">
+            <header class="cp-card-head">
+                <span class="cp-step">2</span>
+                <div>
+                    <h2>Details</h2>
+                    <p>A clear title and description get more replies.</p>
+                </div>
+            </header>
+
+            <div class="cp-field {% if form.title.errors %}has-error{% endif %}">
+                <div class="cp-label-row">
+                    <label for="{{ form.title.id_for_label }}">Title</label>
+                    <span class="cp-count"><span id="cp-title-count">{{ form.title.value|default:""|length }}</span>/200</span>
+                </div>
+                <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" maxlength="200" placeholder="e.g. Looking for a roommate near Viman Nagar" required>
+                {% for error in form.title.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="cp-field {% if form.description.errors %}has-error{% endif %}">
+                <label for="{{ form.description.id_for_label }}">Description</label>
+                <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="6" placeholder="Share the details people will ask about: what's included, timings, condition, who it's for…" required>{{ form.description.value|default:'' }}</textarea>
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+                {% else %}
+                <p class="cp-hint" id="cp-desc-hint">Mention anything that saves a back-and-forth.</p>
+                {% endif %}
+            </div>
+
+            <div class="cp-grid-2">
+                <div class="cp-field {% if form.price.errors %}has-error{% endif %}">
+                    <label for="{{ form.price.id_for_label }}"><span id="cp-price-label">Price</span> <span class="cp-optional">Optional</span></label>
+                    <div class="cp-prefix">
+                        <span>₹</span>
+                        <input type="number" name="{{ form.price.html_name }}" id="{{ form.price.id_for_label }}" value="{% if form.price.value != None and form.price.value != '' %}{{ form.price.value|floatformat:'-2' }}{% endif %}" min="0" step="1" inputmode="numeric" placeholder="0">
+                    </div>
+                    {% if form.price.errors %}
+                        {% for error in form.price.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+                    {% else %}
+                    <p class="cp-hint" id="cp-price-hint">Leave empty if it doesn't apply.</p>
+                    {% endif %}
+                </div>
+
+                <div class="cp-field {% if form.location.errors %}has-error{% endif %}">
+                    <label for="{{ form.location.id_for_label }}">Location</label>
+                    <div class="cp-prefix cp-prefix--icon">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <input type="text" name="{{ form.location.html_name }}" id="{{ form.location.id_for_label }}" value="{{ form.location.value|default:'' }}" maxlength="200" list="cp-areas" placeholder="Area or landmark" autocomplete="off" required>
+                    </div>
+                    <datalist id="cp-areas">
+                        <option value="Viman Nagar"><option value="Kharadi"><option value="Lohegaon"><option value="Wagholi"><option value="Vishrantwadi"><option value="Koregaon Park"><option value="Hadapsar"><option value="Kothrud">
+                    </datalist>
+                    {% for error in form.location.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Photo -->
+        <section class="cp-card">
+            <header class="cp-card-head">
+                <span class="cp-step">3</span>
+                <div>
+                    <h2>Photo <span class="cp-optional">Optional</span></h2>
+                    <p>Posts with a photo get noticed a lot more.</p>
+                </div>
+            </header>
+            <label class="cp-drop {% if form.image.errors %}has-error{% endif %}{% if mode == 'edit' and post.image %} has-file{% endif %}" id="cp-drop" for="{{ form.image.id_for_label }}"{% if mode == 'edit' and post.image %} data-initial="{{ post.image.url }}"{% endif %}>
+                <input type="file" name="{{ form.image.html_name }}" id="{{ form.image.id_for_label }}" accept="image/*">
+                <div class="cp-drop-empty">
+                    <span class="cp-drop-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </span>
+                    <p><strong>Click to upload</strong> or drag and drop</p>
+                    <p class="cp-hint">JPG, PNG or WEBP. Landscape photos look best.</p>
+                </div>
+                <div class="cp-drop-filled">
+                    <img id="cp-drop-img" alt="Selected photo preview"{% if mode == 'edit' and post.image %} src="{{ post.image.url }}"{% endif %}>
+                    <div class="cp-drop-bar">
+                        <span id="cp-drop-name">{% if mode == 'edit' and post.image %}Current photo{% endif %}</span>
+                        <span class="cp-drop-btns">
+                            <span class="cp-link-btn cp-link-btn--brand">Replace</span>
+                            <button type="button" class="cp-link-btn" id="cp-drop-remove" hidden>{% if mode == 'edit' and post.image %}Undo{% else %}Remove{% endif %}</button>
+                        </span>
+                    </div>
+                </div>
+            </label>
+            {% for error in form.image.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+        </section>
+
+        <!-- 4. Contact -->
+        <section class="cp-card">
+            <header class="cp-card-head">
+                <span class="cp-step">4</span>
+                <div>
+                    <h2>Contact</h2>
+                    <p>Students who are signed in can call or WhatsApp you on this number.</p>
+                </div>
+            </header>
+            <div class="cp-field {% if form.phone.errors %}has-error{% endif %}">
+                <label for="{{ form.phone.id_for_label }}">Phone number</label>
+                <div class="cp-prefix cp-prefix--icon">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <input type="tel" name="{{ form.phone.html_name }}" id="{{ form.phone.id_for_label }}" value="{% if form.is_bound or mode == 'edit' %}{{ form.phone.value|default:'' }}{% else %}{{ user.profile.phone|default:'' }}{% endif %}" maxlength="15" placeholder="+91 98765 43210" required>
+                </div>
+                {% if form.phone.errors %}
+                    {% for error in form.phone.errors %}<p class="cp-error">{{ error }}</p>{% endfor %}
+                {% else %}
+                <p class="cp-hint">{% if mode != 'edit' and user.profile.phone and not form.is_bound %}Filled in from your profile. {% endif %}Hidden from visitors who aren't signed in.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <!-- ============ PREVIEW SIDEBAR ============ -->
+    <aside class="cp-side">
+        <p class="cp-side-label">Preview</p>
+        <div class="cp-preview">
+            <div class="cp-preview-media">
+                <div class="cp-preview-ph" id="pv-ph"><span>?</span></div>
+                <img id="pv-img" alt=""{% if mode == 'edit' and post.image %} src="{{ post.image.url }}" class="is-set"{% endif %}>
+                <span class="cp-preview-cat" id="pv-cat" hidden></span>
+            </div>
+            <div class="cp-preview-body">
+                <div class="cp-preview-price" id="pv-price">Add a price</div>
+                <div class="cp-preview-title" id="pv-title">Your title will appear here</div>
+                <div class="cp-preview-meta">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span id="pv-loc">Location</span>
+                </div>
+                <div class="cp-preview-foot">
+                    <span class="cp-preview-avatar">{{ user.first_name|default:user.username|first|upper }}</span>
+                    <span>{{ user.get_full_name|default:user.username }}</span>
+                    <span class="cp-preview-exp">{% if mode == 'edit' %}{{ post.get_expiry_display }}{% else %}Expires in 30 days{% endif %}</span>
+                </div>
+            </div>
+        </div>
+
+        <ul class="cp-tips">
+            <li>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Posts expire automatically after 30 days.
+            </li>
+            <li>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                Your number is only shown to signed-in students.
+            </li>
+            <li>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                You can edit or delete it any time.
+            </li>
+        </ul>
+
+        <div class="cp-actions">
+            {% if mode == 'edit' %}
+            <button type="submit" class="cp-btn cp-btn--primary">Save changes</button>
+            <a href="{% url 'posts:post_detail' post.pk %}" class="cp-btn cp-btn--ghost">Cancel</a>
+            {% else %}
+            <button type="submit" class="cp-btn cp-btn--primary">Publish post</button>
+            <a href="{% url 'posts:post_list' %}" class="cp-btn cp-btn--ghost">Cancel</a>
+            {% endif %}
+        </div>
+        {% if mode == 'edit' %}
+        <a href="{% url 'posts:post_delete' post.pk %}" class="cp-delete">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete this post
+        </a>
+        {% endif %}
+    </aside>
+</form>
+
+</div>
+
+<style>
+html:has(.cp-page) { overflow-x: clip; }
+.cp-page {
+    --ink: #0F172A; --ink-2: #334155; --muted: #64748B; --line: #E2E8F0; --soft: #F8FAFC;
+    --brand: #2563EB; --danger: #DC2626;
+    color: var(--ink);
+    margin-top: -1.5rem;
+}
+.cp-bleed { width: 100vw; margin-left: calc(50% - 50vw); }
+.cp-wrap { max-width: 70rem; margin: 0 auto; padding: 0 1.25rem; }
+
+/* Header */
+.cp-head { position: relative; overflow: hidden; background: linear-gradient(180deg, #F5F8FF 0%, #fff 100%); border-bottom: 1px solid var(--line); }
+.cp-head-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgba(15,23,42,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 95%);
+            mask-image: linear-gradient(180deg, #000, transparent 95%);
+}
+.cp-head-inner { position: relative; padding-top: 2rem; padding-bottom: 2rem; }
+.cp-crumbs { display: flex; align-items: center; gap: .5rem; font-size: .8125rem; color: var(--muted); }
+.cp-crumbs a { display: inline-flex; align-items: center; gap: .2rem; color: var(--ink); font-weight: 600; text-decoration: none; }
+.cp-crumbs a:hover { color: var(--brand); }
+.cp-title { margin-top: .75rem; font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 800; letter-spacing: -0.03em; }
+.cp-lead { margin-top: .35rem; font-size: .95rem; color: var(--muted); }
+
+/* Layout */
+.cp-layout { display: grid; grid-template-columns: minmax(0, 1fr) 20rem; gap: 2rem; align-items: start; padding-top: 1.75rem; padding-bottom: 2rem; }
+.cp-main { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.cp-card { background: #fff; border: 1px solid var(--line); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.cp-card-head { display: flex; gap: .85rem; align-items: flex-start; }
+.cp-step {
+    flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .8rem; font-weight: 700; color: var(--brand); background: #EFF6FF; border: 1px solid #DBEAFE;
+}
+.cp-card-head h2 { font-size: 1rem; font-weight: 700; line-height: 1.75rem; }
+.cp-card-head p { font-size: .84rem; color: var(--muted); }
+.cp-optional { margin-left: .3rem; font-size: .78rem; font-weight: 500; color: #94A3B8; }
+
+/* Category tiles */
+.cp-cats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .65rem; }
+.cp-cat {
+    --c: #2563EB; --cs: #EFF6FF;
+    position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: .7rem;
+    padding: .9rem; border: 1px solid var(--line); border-radius: .85rem; background: #fff; cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.cp-cat--roommate { --c: #7C3AED; --cs: #F5F3FF; }
+.cp-cat--event { --c: #059669; --cs: #ECFDF5; }
+.cp-cat--internship { --c: #D97706; --cs: #FFFBEB; }
+.cp-cat--buy_sell { --c: #DC2626; --cs: #FEF2F2; }
+.cp-cat:hover { border-color: #CBD5E1; }
+.cp-cat input { position: absolute; opacity: 0; pointer-events: none; }
+.cp-cat-icon { width: 2.4rem; height: 2.4rem; border-radius: .7rem; display: flex; align-items: center; justify-content: center; color: var(--c); background: var(--cs); }
+.cp-cat-label { font-size: .85rem; font-weight: 600; color: var(--ink); }
+.cp-cat-check {
+    position: absolute; top: .6rem; right: .6rem; width: 1.15rem; height: 1.15rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: #fff; background: var(--c);
+    opacity: 0; transform: scale(.6); transition: opacity .15s ease, transform .15s ease;
+}
+.cp-cat:has(input:checked) { border-color: var(--c); background: var(--cs); box-shadow: 0 0 0 1px var(--c); }
+.cp-cat:has(input:checked) .cp-cat-check { opacity: 1; transform: none; }
+.cp-cat:has(input:focus-visible) { box-shadow: 0 0 0 4px rgba(37,99,235,.2); }
+.cp-cats.has-error .cp-cat { border-color: #FECACA; }
+
+/* Fields */
+.cp-field label, .cp-label-row label { display: block; font-size: .8125rem; font-weight: 600; color: var(--ink-2); margin-bottom: .4rem; }
+.cp-label-row { display: flex; justify-content: space-between; align-items: baseline; }
+.cp-count { font-size: .75rem; color: #94A3B8; font-variant-numeric: tabular-nums; }
+.cp-page .cp-field input, .cp-page .cp-field textarea {
+    width: 100%; height: 2.75rem; padding: 0 .9rem; font-size: .95rem; color: var(--ink);
+    background: #fff; border: 1px solid #CBD5E1 !important; border-radius: .7rem !important;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04) !important; outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.cp-page .cp-field textarea { height: auto; min-height: 8rem; padding: .7rem .9rem; line-height: 1.6; resize: vertical; }
+.cp-page .cp-field input:hover, .cp-page .cp-field textarea:hover { border-color: #94A3B8 !important; }
+.cp-page .cp-field input:focus, .cp-page .cp-field textarea:focus { border-color: var(--brand) !important; box-shadow: 0 0 0 4px rgba(37,99,235,.14) !important; }
+.cp-page .cp-field.has-error input, .cp-page .cp-field.has-error textarea { border-color: var(--danger) !important; }
+.cp-prefix { position: relative; }
+.cp-prefix > span, .cp-prefix > svg { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; }
+.cp-prefix > span { font-weight: 600; color: var(--muted); }
+.cp-page .cp-prefix input { padding-left: 2.1rem; }
+.cp-page .cp-prefix--icon input { padding-left: 2.5rem; }
+.cp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.cp-hint { margin-top: .4rem; font-size: .78rem; color: var(--muted); line-height: 1.45; }
+.cp-error { margin-top: .4rem; font-size: .8rem; color: var(--danger); }
+.cp-alert { padding: .8rem .9rem; border-radius: .75rem; font-size: .875rem; color: #991B1B; background: #FEF2F2; border: 1px solid #FECACA; }
+.cp-page input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Dropzone */
+.cp-drop {
+    position: relative; display: block; border: 1.5px dashed #CBD5E1; border-radius: .9rem; background: var(--soft);
+    cursor: pointer; overflow: hidden; transition: border-color .15s ease, background-color .15s ease;
+}
+.cp-drop:hover, .cp-drop.is-over { border-color: var(--brand); background: #F5F8FF; }
+.cp-drop.has-error { border-color: var(--danger); }
+.cp-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.cp-drop-empty { padding: 2rem 1rem; text-align: center; font-size: .9rem; color: var(--ink-2); }
+.cp-drop-empty strong { color: var(--brand); }
+.cp-drop-icon { width: 2.75rem; height: 2.75rem; margin: 0 auto .75rem; border-radius: .8rem; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--line); color: var(--muted); }
+.cp-drop-filled { display: none; }
+.cp-drop.has-file { border-style: solid; background: #fff; }
+.cp-drop.has-file .cp-drop-empty { display: none; }
+.cp-drop.has-file .cp-drop-filled { display: block; }
+.cp-drop-filled img { display: block; width: 100%; max-height: 20rem; object-fit: cover; }
+.cp-drop-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .7rem .9rem; font-size: .82rem; color: var(--ink-2); border-top: 1px solid var(--line); }
+.cp-drop-bar span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-link-btn { flex: none; border: 0; background: none; font-size: .82rem; font-weight: 600; color: var(--danger); cursor: pointer; }
+.cp-link-btn--brand { color: var(--brand); }
+.cp-link-btn[hidden] { display: none; }
+.cp-drop-btns { display: flex; gap: 1rem; flex: none; }
+.cp-lead-exp { font-weight: 600; color: var(--ink-2); }
+.cp-lead-exp.is-urgent { color: var(--danger); }
+.cp-delete { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; font-size: .82rem; font-weight: 600; color: var(--muted); text-decoration: none; padding: .25rem; }
+.cp-delete:hover { color: var(--danger); }
+
+/* Preview sidebar */
+.cp-side { position: sticky; top: 5.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.cp-side-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.cp-preview { background: #fff; border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; box-shadow: 0 16px 40px -24px rgba(15,23,42,.3); }
+.cp-preview-media { position: relative; aspect-ratio: 4 / 3; background: #F1F5F9; overflow: hidden; }
+.cp-preview-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+.cp-preview-media img.is-set { display: block; }
+.cp-preview-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #EEF2FF, #E0F2FE); }
+.cp-preview-ph span { font-size: 2.5rem; font-weight: 800; color: #A5B4FC; }
+.cp-preview-cat {
+    position: absolute; top: .7rem; left: .7rem; display: inline-flex; align-items: center; gap: .35rem;
+    padding: .22rem .55rem; border-radius: .45rem; font-size: .7rem; font-weight: 600;
+    background: rgba(255,255,255,.95); box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+.cp-preview-cat[hidden] { display: none; }
+.cp-preview-cat::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pc, #2563EB); }
+.cp-preview-body { padding: .95rem 1rem 1rem; }
+.cp-preview-price { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+.cp-preview-price.is-empty { font-size: .85rem; font-weight: 500; color: #94A3B8; }
+.cp-preview-title { margin-top: .3rem; font-size: .9rem; color: var(--ink-2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cp-preview-title.is-empty, #pv-loc.is-empty { color: #94A3B8; }
+.cp-preview-meta { display: flex; align-items: center; gap: .3rem; margin-top: .35rem; font-size: .78rem; color: var(--muted); }
+.cp-preview-foot { display: flex; align-items: center; gap: .45rem; margin-top: .85rem; padding-top: .75rem; border-top: 1px solid #F1F5F9; font-size: .76rem; color: var(--ink-2); }
+.cp-preview-avatar { width: 1.4rem; height: 1.4rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: #3730A3; background: #E0E7FF; }
+.cp-preview-exp { margin-left: auto; color: var(--muted); }
+
+.cp-tips { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .6rem; }
+.cp-tips li { display: flex; gap: .55rem; font-size: .8rem; line-height: 1.45; color: var(--muted); }
+.cp-tips svg { flex: none; margin-top: 1px; color: #94A3B8; }
+
+.cp-actions { display: flex; flex-direction: column; gap: .5rem; }
+.cp-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+    height: 2.85rem; padding: 0 1.1rem; border-radius: .75rem; border: 1px solid transparent;
+    font-size: .925rem; font-weight: 600; text-decoration: none; cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, filter .15s ease;
+}
+.cp-btn--primary { color: #fff; background: linear-gradient(180deg, #3B82F6, var(--brand)); box-shadow: 0 10px 24px -12px rgba(37,99,235,.7); }
+.cp-btn--primary:hover { filter: brightness(.96); }
+.cp-btn--ghost { color: var(--ink); background: #fff; border-color: var(--line); }
+.cp-btn--ghost:hover { border-color: #CBD5E1; background: var(--soft); }
+.cp-btn:focus-visible { outline: 3px solid rgba(37,99,235,.4); outline-offset: 2px; }
+
+/* Responsive */
+@media (max-width: 1024px) { .cp-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+    .cp-layout { grid-template-columns: 1fr; }
+    .cp-side { position: static; }
+    .cp-preview, .cp-side-label { display: none; }
+    .cp-actions { flex-direction: row-reverse; }
+    .cp-actions .cp-btn { flex: 1; }
+}
+@media (max-width: 560px) {
+    .cp-card { padding: 1.15rem; }
+    .cp-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cp-cats .cp-cat:last-child { grid-column: span 2; }
+    .cp-grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('cp-form');
+    var $ = function (id) { return document.getElementById(id); };
+
+    var CATS = {
+        ROOMMATE:   { color: '#7C3AED', price: 'Rent per month',  per: '/mo', title: 'e.g. Looking for a roommate near Viman Nagar', desc: 'Mention rent split, move-in date, preferences (veg/non-veg, timings) and nearby college.', priceHint: 'Your share of the rent.' },
+        FLAT_PG:    { color: '#2563EB', price: 'Rent per month',  per: '/mo', title: 'e.g. Furnished 1BHK near Kharadi, available from June', desc: 'Mention deposit, food, Wi-Fi, furnishing, rules and distance from college.', priceHint: 'Monthly rent, excluding deposit.' },
+        EVENT:      { color: '#059669', price: 'Entry fee',       per: '',    title: 'e.g. 24-hour hackathon at PICT this Saturday', desc: 'Mention date, time, venue, who can join and how to register.', priceHint: 'Leave empty if entry is free.' },
+        INTERNSHIP: { color: '#D97706', price: 'Monthly stipend', per: '/mo', title: 'e.g. Frontend developer intern, 3 months, remote', desc: 'Mention role, duration, skills needed, mode (remote/on-site) and how to apply.', priceHint: 'Leave empty if unpaid or not disclosed.' },
+        BUY_SELL:   { color: '#DC2626', price: 'Price',           per: '',    title: 'e.g. Dell Inspiron laptop, 8GB RAM, 1 year old', desc: 'Mention condition, age, reason for selling and whether the price is negotiable.', priceHint: 'Asking price.' }
+    };
+    var LABELS = {};
+    form.querySelectorAll('.cp-cat').forEach(function (el) {
+        LABELS[el.querySelector('input').value] = el.querySelector('.cp-cat-label').textContent;
+    });
+
+    var title = $('{{ form.title.id_for_label }}');
+    var desc = $('{{ form.description.id_for_label }}');
+    var price = $('{{ form.price.id_for_label }}');
+    var loc = $('{{ form.location.id_for_label }}');
+    var image = $('{{ form.image.id_for_label }}');
+
+    function selectedCat() {
+        var c = form.querySelector('input[name="{{ form.category.html_name }}"]:checked');
+        return c ? c.value : null;
+    }
+    function fmt(n) { return Number(n).toLocaleString('en-IN', { maximumFractionDigits: 0 }); }
+
+    function render() {
+        var cat = selectedCat(), cfg = CATS[cat] || null;
+        // Category-aware labels
+        $('cp-price-label').textContent = cfg ? cfg.price : 'Price';
+        if (cfg) {
+            title.placeholder = cfg.title;
+            desc.placeholder = cfg.desc;
+            if ($('cp-price-hint')) $('cp-price-hint').textContent = cfg.priceHint;
+        }
+        // Preview
+        var pvCat = $('pv-cat');
+        if (cfg) { pvCat.hidden = false; pvCat.textContent = LABELS[cat]; pvCat.style.setProperty('--pc', cfg.color); }
+        else { pvCat.hidden = true; }
+
+        var t = title.value.trim();
+        $('pv-title').textContent = t || 'Your title will appear here';
+        $('pv-title').classList.toggle('is-empty', !t);
+        $('pv-ph').querySelector('span').textContent = t ? t.charAt(0).toUpperCase() : '?';
+        $('cp-title-count').textContent = title.value.length;
+
+        var p = price.value.trim();
+        var pv = $('pv-price');
+        if (p && Number(p) > 0) { pv.textContent = '₹' + fmt(p) + (cfg ? cfg.per : ''); pv.classList.remove('is-empty'); }
+        else { pv.textContent = cat === 'EVENT' ? 'Open entry' : cat === 'INTERNSHIP' ? 'Apply now' : 'Add a price'; pv.classList.toggle('is-empty', !cat || (cat !== 'EVENT' && cat !== 'INTERNSHIP')); }
+
+        var l = loc.value.trim();
+        $('pv-loc').textContent = l || 'Location';
+        $('pv-loc').classList.toggle('is-empty', !l);
+    }
+    form.addEventListener('input', render);
+    form.addEventListener('change', render);
+    render();
+
+    // Image dropzone + preview
+    var drop = $('cp-drop');
+    function showFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('cp-drop-img').src = e.target.result;
+            $('pv-img').src = e.target.result;
+            $('pv-img').classList.add('is-set');
+            $('cp-drop-name').textContent = file.name;
+            $('cp-drop-remove').hidden = false;
+            drop.classList.add('has-file');
+        };
+        reader.readAsDataURL(file);
+    }
+    image.addEventListener('change', function () { showFile(image.files[0]); });
+    ['dragenter', 'dragover'].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('is-over'); });
+    });
+    drop.addEventListener('drop', function (e) {
+        if (e.dataTransfer.files.length) { image.files = e.dataTransfer.files; showFile(image.files[0]); }
+    });
+    // Drop a newly picked file; in edit mode this restores the current photo
+    $('cp-drop-remove').addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        image.value = '';
+        $('cp-drop-remove').hidden = true;
+        var initial = drop.dataset.initial;
+        if (initial) {
+            $('cp-drop-img').src = initial;
+            $('pv-img').src = initial;
+            $('cp-drop-name').textContent = 'Current photo';
+        } else {
+            drop.classList.remove('has-file');
+            $('pv-img').classList.remove('is-set');
+            $('pv-img').removeAttribute('src');
+        }
+    });
+});
+</script>

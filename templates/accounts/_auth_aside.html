@@ -1,0 +1,65 @@
+{% load static %}
+{% comment %}
+Right-hand brand panel shared by the login and register pages.
+Matches the landing-page hero: light blue gradient, grid, product preview.
+{% endcomment %}
+<aside class="au-aside" aria-hidden="true">
+    <div class="au-aside-grid"></div>
+    <div class="au-aside-glow au-aside-glow--a"></div>
+    <div class="au-aside-glow au-aside-glow--b"></div>
+
+    <div class="au-aside-content">
+        <div class="au-aside-copy">
+            <span class="au-pill"><span class="au-pill-dot"></span>Built for students, by students</span>
+            <h2 class="au-aside-title">Everything happening at <span class="au-grad">your campus</span></h2>
+            <p class="au-aside-lead">Roommates, flats &amp; PGs, internships, events and a student marketplace, all in one place.</p>
+        </div>
+
+        <div class="au-preview">
+            <div class="au-window">
+                <div class="au-window-bar"><span></span><span></span><span></span><div>campushub / recent</div></div>
+                <div class="au-window-body">
+                    <div class="au-row-item">
+                        <img src="{% static 'img/auth/room.jpg' %}" alt="">
+                        <div class="au-row-text">
+                            <div class="au-row-title">Spacious PG with food in Viman Nagar</div>
+                            <div class="au-row-meta"><span class="au-chip au-chip--flat">Flat / PG</span>Viman Nagar</div>
+                        </div>
+                        <div class="au-row-price">₹8,500<small>/mo</small></div>
+                    </div>
+                    <div class="au-row-item">
+                        <img src="{% static 'img/auth/laptop.jpg' %}" alt="">
+                        <div class="au-row-text">
+                            <div class="au-row-title">Laptop for sale, barely used</div>
+                            <div class="au-row-meta"><span class="au-chip au-chip--sell">Buy &amp; Sell</span>Kharadi</div>
+                        </div>
+                        <div class="au-row-price">₹32,000</div>
+                    </div>
+                    <div class="au-row-item">
+                        <img src="{% static 'img/auth/hackathon.jpg' %}" alt="">
+                        <div class="au-row-text">
+                            <div class="au-row-title">24-hour hackathon this weekend</div>
+                            <div class="au-row-meta"><span class="au-chip au-chip--event">Event</span>Lohegaon</div>
+                        </div>
+                        <div class="au-row-price au-row-price--muted">Free</div>
+                    </div>
+                </div>
+            </div>
+            <div class="au-float">
+                <span class="au-float-icon">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </span>
+                <div>
+                    <div class="au-float-title">Contact stays private</div>
+                    <div class="au-float-sub">Numbers shown to signed-in students only</div>
+                </div>
+            </div>
+        </div>
+
+        <dl class="au-aside-stats">
+            <div><dd>500+</dd><dt>Active posts</dt></div>
+            <div><dd>1000+</dd><dt>Students</dt></div>
+            <div><dd>5</dd><dt>Categories</dt></div>
+        </dl>
+    </div>
+</aside>

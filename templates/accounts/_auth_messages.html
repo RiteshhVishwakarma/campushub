@@ -1,0 +1,15 @@
+{% comment %}Flash messages shown inside the full-screen auth page (the site toasts sit underneath it).{% endcomment %}
+{% if messages %}
+<div class="au-messages">
+    {% for message in messages %}
+    <div class="au-alert {% if message.tags == 'success' or message.tags == 'info' %}au-alert--ok{% endif %}" aria-live="polite">
+        {% if message.tags == 'success' or message.tags == 'info' %}
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        {% else %}
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        {% endif %}
+        <p>{{ message }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
